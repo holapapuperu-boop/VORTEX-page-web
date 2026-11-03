@@ -27,7 +27,7 @@ export default function Landscape() {
       <g className={s.lVolcano}>
         <path d="M230 900 L590 430 Q640 372 682 368 L758 368 Q800 372 850 430 L1210 900Z" fill="#241830" />
         <path d="M590 430 Q640 372 682 368 L700 368 L650 470 L610 520Z" fill="#33203f" opacity=".7" />
-        <ellipse className={s.lava} cx="720" cy="370" rx="52" ry="8" fill="#e9a23b" filter="url(#glow)" />
+        <ellipse cx="720" cy="370" rx="52" ry="8" fill="#e9a23b" filter="url(#glow)" />
         <ellipse cx="720" cy="370" rx="40" ry="5" fill="#f6c566" />
         <g filter="url(#soft)">
           <circle className={`${s.smoke} ${s.sm1}`} cx="720" cy="360" r="34" fill="#cfc6d6" />

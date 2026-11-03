@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import DemoBar from "@/components/DemoBar";
 import Landscape from "./Landscape";
-import Ascent from "./Ascent";
 import TastingMenu from "./TastingMenu";
 import OpenNow from "./OpenNow";
 import { HOURS } from "./hours";
@@ -21,7 +20,6 @@ export default function Cafeteria() {
         <header className={s.header}>
           <a href="#" className={s.brand}>Café Volcán</a>
           <nav aria-label="Principal">
-            <a href="#grano">Del grano a la taza</a>
             <a href="#menu">Menú</a>
             <a href="#visita">Visítanos</a>
           </nav>
@@ -37,7 +35,6 @@ export default function Cafeteria() {
         <div className={s.heroNow}><OpenNow tone="dark" /></div>
       </section>
 
-      <Ascent />
       <TastingMenu />
 
       <section id="visita" className={s.visit}>

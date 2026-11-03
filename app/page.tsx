@@ -127,23 +127,18 @@ export default function Home() {
               <p className="eyebrow blue"><i /> Ejemplos</p>
               <h2>Mira cómo puede<br /><em>verse tu página.</em></h2>
             </div>
-            <p>Dos páginas de muestra con negocios ficticios y estilos distintos. Cada negocio merece su propio diseño.</p>
+            <p>Una página de muestra con un negocio ficticio. Cada negocio merece un diseño hecho a su medida.</p>
           </Reveal>
-          <div className="example-grid">
-            {[
-              { href: "/ejemplos/laboratorio", cls: "ex-lab", title: "Laboratorio clínico", text: "Limpio, cercano y fácil de entender." },
-              { href: "/ejemplos/cafeteria", cls: "ex-cafe", title: "Cafetería", text: "Cálido, editorial y con carácter." },
-            ].map((ex, i) => (
-              <Reveal key={ex.href} delay={i * 0.1}>
-                <Link href={ex.href} className={`example-card ${ex.cls}`}>
-                  <span className="example-art" aria-hidden="true" />
-                  <strong>{ex.title}</strong>
-                  <span>{ex.text}</span>
-                  <em>Ver ejemplo <ArrowUpRight size={15} /></em>
-                </Link>
-              </Reveal>
-            ))}
-          </div>
+          <Reveal>
+            <Link href="/ejemplos/cafeteria" className="example-card ex-cafe">
+              <span className="example-art" aria-hidden="true" />
+              <span className="example-body">
+                <strong>Café Volcán</strong>
+                <span>Una cafetería ficticia con menú interactivo, horario en tiempo real y diseño propio.</span>
+                <em>Ver el ejemplo <ArrowUpRight size={15} /></em>
+              </span>
+            </Link>
+          </Reveal>
         </div>
       </section>
 
