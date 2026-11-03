@@ -498,15 +498,3 @@ footer { background: var(--ink); color: #fff; padding-top: 61px; }
   .check-card li, .check-dot, .check-foot i { animation: none; }
   .check-card li { color: #fff; } .check-dot { background: #2563eb; color: #fff; }
 }
-
-/* Ejemplos de páginas */
-.examples { background: var(--paper); }
-.example-card { display: grid; grid-template-columns: 1.1fr 1fr; gap: 28px; align-items: center; padding: 14px; border: 1px solid var(--line); border-radius: var(--r-card); background: #fff; text-decoration: none; color: var(--ink); transition: transform .3s var(--ease), box-shadow .3s var(--ease); }
-.example-card:hover { transform: translateY(-4px); box-shadow: 0 18px 40px rgba(11, 15, 20, .08); }
-.example-art { height: 280px; border-radius: 16px; display: block; }
-.example-body { display: grid; gap: 8px; padding: 10px 24px 10px 0; }
-.ex-cafe .example-art { background: radial-gradient(circle at 74% 62%, #e9a23b 0 54px, transparent 55px), linear-gradient(180deg, #1b1424, #47203f 62%, #a3203f); }
-.example-card strong { font: 600 21px Montserrat, Arial, sans-serif; letter-spacing: -.03em; }
-.example-body > span { color: #657284; font-size: 16px; line-height: 1.6; }
-.example-card em { font-style: normal; font-weight: 600; font-size: 14px; color: var(--blue); display: inline-flex; align-items: center; gap: 6px; padding-top: 8px; }
-@media (max-width: 800px) { .example-card { grid-template-columns: 1fr; gap: 14px; } .example-art { height: 170px; } .example-body { padding: 0 12px 14px; } }

@@ -120,28 +120,6 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="ejemplos" className="section examples">
-        <div className="container">
-          <Reveal className="section-heading">
-            <div>
-              <p className="eyebrow blue"><i /> Ejemplos</p>
-              <h2>Mira cómo puede<br /><em>verse tu página.</em></h2>
-            </div>
-            <p>Una página de muestra con un negocio ficticio. Cada negocio merece un diseño hecho a su medida.</p>
-          </Reveal>
-          <Reveal>
-            <Link href="/ejemplos/cafeteria" className="example-card ex-cafe">
-              <span className="example-art" aria-hidden="true" />
-              <span className="example-body">
-                <strong>Café Volcán</strong>
-                <span>Una cafetería ficticia con menú interactivo, horario en tiempo real y diseño propio.</span>
-                <em>Ver el ejemplo <ArrowUpRight size={15} /></em>
-              </span>
-            </Link>
-          </Reveal>
-        </div>
-      </section>
-
       <section id="planes" className="section plans">
         <div className="container">
           <Reveal className="section-heading">
