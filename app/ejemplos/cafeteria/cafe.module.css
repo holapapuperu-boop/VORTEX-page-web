@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Karla:wght@400;500;700&display=swap');
+.page { --cream: #f6efe3; --brown: #3b2a20; --terra: #c4552d; font-family: Karla, Arial, sans-serif; background: var(--cream); color: var(--brown); }
+.page h1, .page h2, .page h3, .brand { font-family: Fraunces, Georgia, 'Times New Roman', serif; font-weight: 600; }
+.header { display: flex; justify-content: space-between; align-items: center; padding: 22px max(24px, calc(50% - 560px)); border-bottom: 1px solid #e3d6c1; }
+.brand { font-size: 24px; letter-spacing: -.01em; }
+.header nav { display: flex; gap: 26px; font-size: 14px; letter-spacing: .06em; text-transform: uppercase; }
+.header nav a { color: var(--brown); text-decoration: none; }
+.hero { position: relative; padding: 96px max(24px, calc(50% - 560px)) 110px; overflow: hidden; }
+.kicker { font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: var(--terra); margin: 0 0 22px; font-weight: 700; }
+.hero h1 { font-size: clamp(44px, 7vw, 92px); line-height: 1; margin: 0 0 26px; max-width: 760px; letter-spacing: -.03em; }
+.hero em { color: var(--terra); }
+.lead { font-size: 19px; line-height: 1.7; max-width: 520px; margin: 0 0 34px; color: #5a4636; }
+.btn { display: inline-block; background: var(--brown); color: var(--cream); padding: 15px 30px; text-decoration: none; font-weight: 700; letter-spacing: .04em; border-radius: 4px; }
+.btn:hover { background: var(--terra); }
+.cup { position: absolute; right: max(40px, calc(50% - 440px)); top: 90px; width: 250px; height: 300px; }
+.cup::before { content: ""; position: absolute; left: 0; bottom: 34px; width: 200px; height: 130px; background: var(--brown); border-radius: 0 0 100px 100px; }
+.cup::after { content: ""; position: absolute; left: 190px; bottom: 66px; width: 44px; height: 62px; border: 14px solid var(--brown); border-left: 0; border-radius: 0 40px 40px 0; }
+.cup b { position: absolute; left: -22px; bottom: 18px; width: 246px; height: 20px; border-radius: 50%; background: var(--terra); }
+.cup i { position: absolute; bottom: 180px; width: 12px; height: 80px; border-radius: 10px; background: linear-gradient(var(--terra), transparent); opacity: 0; animation: rise 4s ease-in-out infinite; }
+.cup i:nth-child(1) { left: 50px; }
+.cup i:nth-child(2) { left: 94px; animation-delay: 1.2s; height: 100px; }
+.cup i:nth-child(3) { left: 138px; animation-delay: 2.4s; }
+@keyframes rise { 0% { transform: translateY(30px) scaleY(.7); opacity: 0; } 40% { opacity: .8; } 100% { transform: translateY(-40px) scaleY(1.1); opacity: 0; } }
+.section { padding: 80px max(24px, calc(50% - 560px)); }
+.section h2 { font-size: clamp(30px, 4vw, 46px); margin: 0 0 36px; letter-spacing: -.02em; }
+.menu { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; }
+.menu h3 { font-size: 22px; color: var(--terra); margin: 0 0 18px; font-style: italic; }
+.menu ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.menu li { display: flex; align-items: baseline; gap: 10px; font-size: 17px; }
+.menu li i { flex: 1; border-bottom: 1px dotted #b9a68b; transform: translateY(-4px); }
+.note { font-size: 12px; color: #8a7561; margin-top: 26px; }
+.story { display: grid; grid-template-columns: .8fr 1.2fr; gap: 56px; align-items: center; background: #ecdfc9; }
+.story p { line-height: 1.75; font-size: 17px; color: #5a4636; max-width: 540px; }
+.blocks { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 150px 150px; gap: 14px; }
+.blocks span { border-radius: 4px; background: var(--brown); }
+.blocks span:nth-child(1) { grid-row: span 2; background: var(--terra); border-radius: 120px 120px 4px 4px; }
+.blocks span:nth-child(3) { background: #d9b88a; }
+.visit { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; }
+.visit h2 { font-size: 30px; margin-bottom: 14px; }
+.visit p { line-height: 1.8; font-size: 17px; margin: 0; }
+.footer { text-align: center; padding: 30px 24px; font-size: 13px; color: #8a7561; border-top: 1px solid #e3d6c1; }
+@media (max-width: 800px) {
+  .menu, .story, .visit { grid-template-columns: 1fr; gap: 36px; }
+  .header nav { display: none; }
+  .cup { display: none; }
+  .hero { padding: 64px 24px 72px; }
+}
+@media (prefers-reduced-motion: reduce) { .cup i { animation: none; opacity: .5; } }

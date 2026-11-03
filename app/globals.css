@@ -498,3 +498,17 @@ footer { background: var(--ink); color: #fff; padding-top: 61px; }
   .check-card li, .check-dot, .check-foot i { animation: none; }
   .check-card li { color: #fff; } .check-dot { background: #2563eb; color: #fff; }
 }
+
+/* Ejemplos de páginas */
+.examples { background: var(--paper); }
+.example-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.example-grid > div { display: flex; }
+.example-card { flex: 1; display: flex; flex-direction: column; gap: 6px; padding: 14px 14px 24px; border: 1px solid var(--line); border-radius: var(--r-card); background: #fff; text-decoration: none; color: var(--ink); transition: transform .3s var(--ease), box-shadow .3s var(--ease); }
+.example-card:hover { transform: translateY(-4px); box-shadow: 0 18px 40px rgba(11, 15, 20, .08); }
+.example-art { height: 200px; border-radius: 16px; margin-bottom: 14px; display: block; }
+.ex-lab .example-art { background: radial-gradient(circle at 70% 30%, #0f9d84 0 38px, transparent 39px), linear-gradient(135deg, #d9f3ec, #f3fbf9); }
+.ex-cafe .example-art { background: radial-gradient(circle at 30% 60%, #c4552d 0 54px, transparent 55px), linear-gradient(135deg, #ecdfc9, #f6efe3); }
+.example-card strong { font: 600 21px Montserrat, Arial, sans-serif; letter-spacing: -.03em; padding: 0 10px; }
+.example-card > span:not(.example-art) { color: #657284; font-size: 15px; padding: 0 10px; }
+.example-card em { font-style: normal; font-weight: 600; font-size: 14px; color: var(--blue); display: inline-flex; align-items: center; gap: 6px; padding: 10px 10px 0; }
+@media (max-width: 800px) { .example-grid { grid-template-columns: 1fr; } .example-art { height: 160px; } }

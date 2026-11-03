@@ -120,6 +120,33 @@ export default function Home() {
         </div>
       </section>
 
+      <section id="ejemplos" className="section examples">
+        <div className="container">
+          <Reveal className="section-heading">
+            <div>
+              <p className="eyebrow blue"><i /> Ejemplos</p>
+              <h2>Mira cómo puede<br /><em>verse tu página.</em></h2>
+            </div>
+            <p>Dos páginas de muestra con negocios ficticios y estilos distintos. Cada negocio merece su propio diseño.</p>
+          </Reveal>
+          <div className="example-grid">
+            {[
+              { href: "/ejemplos/laboratorio", cls: "ex-lab", title: "Laboratorio clínico", text: "Limpio, cercano y fácil de entender." },
+              { href: "/ejemplos/cafeteria", cls: "ex-cafe", title: "Cafetería", text: "Cálido, editorial y con carácter." },
+            ].map((ex, i) => (
+              <Reveal key={ex.href} delay={i * 0.1}>
+                <Link href={ex.href} className={`example-card ${ex.cls}`}>
+                  <span className="example-art" aria-hidden="true" />
+                  <strong>{ex.title}</strong>
+                  <span>{ex.text}</span>
+                  <em>Ver ejemplo <ArrowUpRight size={15} /></em>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section id="planes" className="section plans">
         <div className="container">
           <Reveal className="section-heading">

@@ -1,0 +1,8 @@
+.bar { position: sticky; top: 0; z-index: 50; display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; justify-content: space-between; padding: 10px 24px; background: #0b0f14; color: #c5cedb; font: 400 13px/1.4 Inter, Arial, sans-serif; }
+.bar p { margin: 0; }
+.bar strong { color: #fff; font-weight: 600; }
+.bar span { display: flex; gap: 18px; align-items: center; }
+.bar a { color: #c5cedb; text-decoration: none; }
+.bar a:hover { color: #fff; }
+.bar .cta { background: #2563eb; color: #fff; padding: 7px 16px; border-radius: 999px; font-weight: 600; }
+@media (max-width: 560px) { .bar { padding: 10px 16px; } .bar p { font-size: 12px; } }
