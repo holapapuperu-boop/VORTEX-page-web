@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowDownRight, ArrowUpRight, Check, Mail, MapPin, MessageCircle, MoveRight } from "lucide-react";
 import Header from "@/components/Header";
-import Logo from "@/components/Logo";
+import Logo, { Mark } from "@/components/Logo";
 import ContactForm from "@/components/ContactForm";
 import HeroArt from "@/components/HeroArt";
 import ServiceArt, { type ServiceKind } from "@/components/ServiceArt";
@@ -192,8 +192,7 @@ export default function Home() {
       <section id="nosotros" className="about">
         <div className="container about-grid">
           <Reveal className="about-visual">
-            <div className="visual-number">V</div>
-            <div className="visual-line" />
+            <div className="visual-logo"><Mark /><div className="visual-line" /></div>
             <p>Diseño +<br />funcionalidad</p>
             <div className="square s1" />
             <div className="square s2" />
