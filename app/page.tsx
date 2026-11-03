@@ -145,8 +145,19 @@ export default function Home() {
             </div>
             <p>No dejes que tu sitio se quede atrás. En VORTEX te ayudamos a mantener tu página web actualizada, funcional y presentable.</p>
           </Reveal>
-          <div className="plan-grid plan-grid-2">
+          <div className="plan-grid">
             {CARE_PLANS.map((plan, i) => <PlanCard key={plan.name} plan={plan} delay={i * 0.1} />)}
+            <Reveal delay={0.2} className="check-wrap">
+              <aside className="check-card" aria-label="Ejemplo ilustrativo de una revisión de mantenimiento">
+                <p className="check-title">Así revisamos tu página</p>
+                <ul>
+                  {["Enlaces y botones", "Formularios", "Vista en celular", "Textos e imágenes"].map((t, i) => (
+                    <li key={t} style={{ ["--i" as string]: i }}><span className="check-dot"><Check size={12} /></span>{t}</li>
+                  ))}
+                </ul>
+                <p className="check-foot"><i /> Revisión mensual · ilustración</p>
+              </aside>
+            </Reveal>
           </div>
           <Reveal><p className="plan-note">Los planes de mantenimiento tienen límites razonables de modificaciones. No incluyen rediseños completos, nuevas funcionalidades complejas ni desarrollo de nuevas páginas. Dominio, alojamiento y servicios externos se cotizan por separado, salvo acuerdo específico. Los precios son propuestas iniciales de referencia.</p></Reveal>
         </div>
