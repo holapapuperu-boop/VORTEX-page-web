@@ -13,8 +13,8 @@ export type Plan = {
 export const DEV_PLANS: Plan[] = [
   {
     name: "VORTEX Basic",
-    price: "$50 – $80",
-    priceNote: "Precio inicial orientativo",
+    price: "$80",
+    priceNote: "Pago único",
     description: "Para negocios que necesitan una presencia digital sencilla y profesional.",
     items: [
       "Sitio web informativo",
@@ -29,8 +29,8 @@ export const DEV_PLANS: Plan[] = [
   },
   {
     name: "VORTEX Plus",
-    price: "$100 – $150",
-    priceNote: "Precio inicial orientativo",
+    price: "$150",
+    priceNote: "Pago único",
     description: "Para negocios que necesitan una página más completa y personalizada.",
     items: [
       "Todo lo incluido en Basic",
@@ -47,8 +47,8 @@ export const DEV_PLANS: Plan[] = [
   },
   {
     name: "VORTEX Core",
-    price: "Cotización personalizada",
-    priceNote: "Cada proyecto requiere evaluación y cotización",
+    price: "$250+",
+    priceNote: "Inversión ajustada según la complejidad, alcance y funcionalidades",
     description: "Para proyectos que necesitan soluciones digitales más específicas.",
     lead: "Puede incluir, dependiendo de la evaluación:",
     items: [
