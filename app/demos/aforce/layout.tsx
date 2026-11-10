@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "./aforce.css";
 
 export const metadata: Metadata = {
   title: "A-FORCE | Demo Concesionaria Luxury — VORTEX Digital Solutions",
