@@ -5,10 +5,10 @@
 @theme {
   --font-serif-lux: "Cormorant Garamond", Georgia, "Times New Roman", serif;
   --font-sans-tech: "Plus Jakarta Sans", Inter, Arial, sans-serif;
-  --color-ink: #0b0b0b;
-  --color-ink-2: #0f0f10;
-  --color-chalk: #f5f5f7;
+  --color-ink: #050505;
+  --color-ink-2: #0a0a0a;
+  --color-chalk: #f5f5f5;
   --color-metal: #262626;
-  --color-gold: #c9a961;
+  --color-crimson: #ff0033;
   --color-platinum: #e6e4df;
 }

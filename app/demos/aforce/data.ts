@@ -31,8 +31,6 @@ export const ATELIER = [
     body: "Sistemas de escape de titanio con válvulas activas, afinados en dinamómetro. Más caudal, menos peso y una firma sonora que se reconoce a una cuadra.",
     specs: ["Titanio grado 5", "Válvulas activas", "Mapa ECU"],
     img: IMG.hero,
-    pos: "50% 66%",
-    zoom: 1.7,
   },
   {
     id: "wheels",
@@ -42,8 +40,6 @@ export const ATELIER = [
     body: "Llantas forjadas monobloque, frenos de carbono-cerámica y suspensión calibrada a tu manera de conducir. Cada gramo no suspendido cuenta.",
     specs: ["Forjado 6061-T6", "Carbono-cerámico", "Coilovers ajustables"],
     img: IMG.wheel,
-    pos: "50% 52%",
-    zoom: 1,
   },
   {
     id: "ppf",
@@ -53,13 +49,11 @@ export const ATELIER = [
     body: "Película de protección de pintura auto-regenerable y recubrimiento cerámico 9H. El acabado de fábrica, conservado por años.",
     specs: ["PPF 8 mil", "Cerámico 9H", "Garantía 10 años"],
     img: IMG.gtr,
-    pos: "50% 62%",
-    zoom: 1,
   },
 ];
 
 export const BUILDS = [
-  { name: "911 GT3 RS", make: "Porsche", tag: "Disponible", year: "2016", hp: "500 HP", zero: "3.3 s", img: IMG.porsche, pos: "50% 50%" },
-  { name: "GT-R Nismo", make: "Nissan", tag: "En proceso", year: "2020", hp: "600 HP", zero: "2.9 s", img: IMG.gtr, pos: "50% 64%" },
-  { name: "F40", make: "Ferrari", tag: "Vendido", year: "1991", hp: "471 HP", zero: "4.1 s", img: IMG.wheel, pos: "50% 50%" },
+  { name: "911 GT3 RS", make: "Porsche", tag: "Disponible", year: "2016", hp: "500 HP", zero: "3.3 s", img: IMG.porsche },
+  { name: "GT-R Nismo", make: "Nissan", tag: "En proceso", year: "2020", hp: "600 HP", zero: "2.9 s", img: IMG.gtr },
+  { name: "F40", make: "Ferrari", tag: "Vendido", year: "1991", hp: "471 HP", zero: "4.1 s", img: IMG.wheel },
 ];
