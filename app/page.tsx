@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowDownRight, ArrowUpRight, Check, Mail, MapPin, MessageCircle, MoveRight } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, Check, Mail, MapPin, MessageCircle, MoveRight, ExternalLink, Clock } from "lucide-react";
 import Header from "@/components/Header";
 import Logo, { Mark } from "@/components/Logo";
 import ContactForm from "@/components/ContactForm";
@@ -186,6 +186,94 @@ export default function Home() {
           <Reveal delay={0.12}>
             <VortexAI />
           </Reveal>
+        </div>
+      </section>
+
+      {/* ── Demos / Ejemplos ── */}
+      <section id="demos" className="demos">
+        <div className="container">
+          <Reveal className="section-heading">
+            <div>
+              <p className="eyebrow blue"><i /> Ejemplos de proyectos</p>
+              <h2>Así se ven<br /><em>nuestras webs.</em></h2>
+            </div>
+            <p>Demostraciones reales del tipo de páginas que podemos crear para tu negocio. Cada demo es un ejemplo funcional con diseño completo.</p>
+          </Reveal>
+          <div className="demo-grid">
+
+            {/* Demo 1 — A-FORCE (disponible) */}
+            <Reveal>
+              <article className="demo-card">
+                <div className="demo-thumb">
+                  {/* Mini preview del hero de A-FORCE */}
+                  <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" width="260" height="130" aria-hidden>
+                    <rect width="400" height="200" fill="#0A0A0A"/>
+                    <path d="M 42 145 Q 55 110 90 92 Q 145 72 200 70 Q 240 68 265 70 L 335 78 Q 390 90 410 108 L 428 140 Q 435 158 420 164 L 42 164 Q 28 158 42 145Z" fill="none" stroke="rgba(196,164,74,.35)" strokeWidth="1.5"/>
+                    <path d="M 115 92 Q 150 55 215 46 L 300 46 Q 345 48 368 78 L 115 92Z" fill="rgba(196,164,74,.06)" stroke="rgba(196,164,74,.22)" strokeWidth="1.2"/>
+                    <circle cx="118" cy="164" r="20" fill="none" stroke="rgba(196,164,74,.35)" strokeWidth="1.5"/>
+                    <circle cx="118" cy="164" r="10" fill="rgba(196,164,74,.1)" stroke="rgba(196,164,74,.4)" strokeWidth="1.2"/>
+                    <circle cx="316" cy="164" r="20" fill="none" stroke="rgba(196,164,74,.35)" strokeWidth="1.5"/>
+                    <circle cx="316" cy="164" r="10" fill="rgba(196,164,74,.1)" stroke="rgba(196,164,74,.4)" strokeWidth="1.2"/>
+                    <text x="200" y="30" textAnchor="middle" fill="rgba(196,164,74,.7)" fontSize="11" fontFamily="Georgia,serif" letterSpacing="4" fontWeight="600">A-FORCE</text>
+                    <text x="200" y="186" textAnchor="middle" fill="rgba(196,164,74,.3)" fontSize="7" fontFamily="Arial,sans-serif" letterSpacing="3">REFUSE ORDINARY</text>
+                  </svg>
+                </div>
+                <div className="demo-body">
+                  <p className="demo-industry">Concesionaria · Detailing</p>
+                  <span className="demo-badge">Demo disponible</span>
+                  <h3>A-FORCE</h3>
+                  <p>Landing completa para concesionaria de lujo. Dark mode editorial, catálogo de builds, showcase de servicios y formulario de proyectos.</p>
+                  <Link href="/demos/aforce" className="demo-cta">
+                    Ver demo <ExternalLink />
+                  </Link>
+                </div>
+              </article>
+            </Reveal>
+
+            {/* Demo 2 — Próximamente */}
+            <Reveal delay={0.1}>
+              <article className="demo-card">
+                <div className="demo-thumb" style={{ background: "linear-gradient(135deg,#0d1117,#1a1a2e)" }}>
+                  <svg viewBox="0 0 400 200" width="200" height="100" aria-hidden>
+                    <circle cx="200" cy="100" r="60" fill="none" stroke="rgba(37,99,235,.2)" strokeWidth="1.5"/>
+                    <circle cx="200" cy="100" r="40" fill="rgba(37,99,235,.04)" stroke="rgba(37,99,235,.15)" strokeWidth="1"/>
+                    <circle cx="200" cy="100" r="12" fill="rgba(37,99,235,.1)" stroke="rgba(37,99,235,.3)" strokeWidth="1"/>
+                    {[0,1,2,3,4,5].map(i=>{const a=i*60*Math.PI/180;return<line key={i} x1={200+12*Math.cos(a)} y1={100+12*Math.sin(a)} x2={200+40*Math.cos(a)} y2={100+40*Math.sin(a)} stroke="rgba(37,99,235,.2)" strokeWidth="1"/>;})}
+                  </svg>
+                </div>
+                <div className="demo-body">
+                  <p className="demo-industry">Restaurante · Gastronomía</p>
+                  <div className="demo-coming">
+                    <Clock />
+                    <span>Próximamente</span>
+                  </div>
+                </div>
+              </article>
+            </Reveal>
+
+            {/* Demo 3 — Próximamente */}
+            <Reveal delay={0.2}>
+              <article className="demo-card">
+                <div className="demo-thumb" style={{ background: "linear-gradient(135deg,#0a0a0a,#1a1210)" }}>
+                  <svg viewBox="0 0 400 200" width="200" height="100" aria-hidden>
+                    <rect x="140" y="60" width="120" height="80" rx="4" fill="none" stroke="rgba(196,164,74,.2)" strokeWidth="1.5"/>
+                    <rect x="155" y="75" width="90" height="12" rx="2" fill="rgba(196,164,74,.08)" stroke="rgba(196,164,74,.2)" strokeWidth="1"/>
+                    <rect x="155" y="95" width="70" height="8" rx="2" fill="rgba(196,164,74,.05)"/>
+                    <rect x="155" y="108" width="80" height="8" rx="2" fill="rgba(196,164,74,.05)"/>
+                    <rect x="155" y="121" width="50" height="8" rx="2" fill="rgba(196,164,74,.05)"/>
+                  </svg>
+                </div>
+                <div className="demo-body">
+                  <p className="demo-industry">Hotel · Hospedaje</p>
+                  <div className="demo-coming">
+                    <Clock />
+                    <span>Próximamente</span>
+                  </div>
+                </div>
+              </article>
+            </Reveal>
+
+          </div>
         </div>
       </section>
 
