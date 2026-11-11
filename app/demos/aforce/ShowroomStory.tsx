@@ -116,13 +116,17 @@ function StoryPanel({
   const seg = 1 / N;
   const ps = index * seg;         // start del panel
   const pe = ps + seg;            // end del panel
-  const mid = ps + seg * 0.5;     // centro
+  const first = index === 0;
+  const last = index === N - 1;
 
   /* ── Visibilidad del panel (opacity window) ── */
+  // El primer panel ya nace visible (nunca pantalla negra al entrar) y el último se queda hasta soltar el sticky.
   const panelOpacity = useTransform(
     p,
-    [ps - 0.01, ps + seg * 0.08, pe - seg * 0.08, pe + 0.01],
-    [0, 1, 1, 0]
+    first
+      ? [-1, 0, pe - seg * 0.08, pe + 0.01]
+      : [ps - 0.01, ps + seg * 0.08, pe - seg * 0.08, pe + 0.01],
+    first ? [1, 1, 1, 0] : last ? [0, 1, 1, 1] : [0, 1, 1, 0]
   );
 
   /* ── Imagen: paralaje profundo ── */
@@ -130,14 +134,15 @@ function StoryPanel({
   const imgY = useTransform(p, [ps, pe], ["-6%", "6%"]);
 
   /* ── Cortina de entrada: wipe vertical negro que se abre ── */
-  const curtainY = useTransform(p, [ps - 0.01, ps + seg * 0.15], ["0%", "-100%"]);
+  const curtainY = useTransform(p, first ? [-1, 0] : [ps - 0.01, ps + seg * 0.15], first ? ["-100%", "-100%"] : ["0%", "-100%"]);
 
   /* ── Overlay que oscurece al salir ── */
-  const exitOverlay = useTransform(p, [pe - seg * 0.2, pe], [0, 0.88]);
+  const exitOverlay = useTransform(p, [pe - seg * 0.2, pe], [0, last ? 0 : 0.88]);
 
   /* ── Texto: ventana de aparición y salida ── */
-  const tIn = ps + seg * 0.12;
-  const tOut = pe - seg * 0.18;
+  // Panel 0: el texto ya está completo al llegar. Último panel: el texto no sale.
+  const tIn = first ? -0.3 : ps + seg * 0.12;
+  const tOut = last ? 2 : pe - seg * 0.18;
 
   /* ── Número índice de fondo ── */
   const idxOpacity = useTransform(p, [tIn, tIn + 0.04, tOut, tOut + 0.04], [0, 0.055, 0.055, 0]);
@@ -166,7 +171,7 @@ function StoryPanel({
           src={frame.src}
           alt={`Vista ${frame.angle}`}
           fill
-          priority={index === 0}
+          priority={index < 2}
           sizes="100vw"
           className="object-cover"
           style={{ objectPosition: frame.pos }}
@@ -325,7 +330,9 @@ export default function ShowroomStory() {
     target: outer,
     offset: ["start start", "end end"],
   });
-  const p = useSpring(scrollYProgress, { stiffness: 80, damping: 24, mass: 0.5 });
+  const p = useSpring(scrollYProgress, { stiffness: 140, damping: 30, mass: 0.4, restDelta: 0.0005 });
+  // Barras fijas solo visibles mientras estamos dentro de la sección
+  const fixedO = useTransform(scrollYProgress, [0, 0.01, 0.985, 1], [0, 1, 1, 0]);
 
   /* Barra de progreso global */
   const barW = useTransform(p, [0, 1], ["0%", "100%"]);
@@ -369,18 +376,17 @@ export default function ShowroomStory() {
     <section
       ref={outer}
       id="showroom"
-      className="relative border-t border-white/10"
+      className="relative border-t border-white/10 bg-[#050505]"
       style={{ height: `${N * 130}vh` }}
     >
       {/* ── Barra de progreso top ── */}
-      <div className="fixed inset-x-0 top-0 z-[60] h-[2px] bg-transparent">
+      <motion.div style={{ opacity: fixedO }} className="fixed inset-x-0 top-0 z-[60] h-[2px] bg-transparent">
         <motion.div style={{ width: barW }} className="h-full origin-left bg-[#FF0033]" />
-      </div>
+      </motion.div>
 
       {/* ── HUD: ángulo activo + counter ── */}
       <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
+        style={{ opacity: fixedO }}
         className="pointer-events-none fixed bottom-8 right-6 z-50 hidden text-right md:block"
       >
         <motion.p className="font-serif-lux text-6xl font-light tabular-nums text-white/10">
@@ -389,7 +395,7 @@ export default function ShowroomStory() {
       </motion.div>
 
       {/* ── Sticky wrapper — empieza bajo la navbar (80px) ── */}
-      <div className="sticky top-20 h-[calc(100vh-80px)] overflow-hidden">
+      <div className="sticky top-20 h-[calc(100vh-80px)] overflow-hidden bg-[#050505]">
 
         {/* Encabezado que entra sólo la primera vez */}
         <motion.div
