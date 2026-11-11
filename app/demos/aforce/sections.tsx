@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import {
   motion,
   type MotionValue,
@@ -11,12 +11,62 @@ import {
   useSpring,
   useReducedMotion,
   easeOut,
+  useInView,
+  animate as fmAnimate,
   type Variants,
 } from "framer-motion";
 import { ArrowUpRight, Menu, X, Gauge, Zap, CalendarDays, MessageCircle, Send } from "lucide-react";
 import { ATELIER, BUILDS, IMG, NAV, STATS, VORTEX_URL, WHATSAPP } from "./data";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
+
+/* ───────────── CountUp: número anima al entrar en viewport ───────────── */
+function CountUp({ value, suffix = "" }: { value: number; suffix?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, amount: 0.5 });
+  const reduce = useReducedMotion();
+  useEffect(() => {
+    if (!inView || !ref.current || reduce) return;
+    const ctrl = fmAnimate(0, value, {
+      duration: 1.8,
+      ease: [0.16, 1, 0.3, 1],
+      onUpdate(v) {
+        if (ref.current) ref.current.textContent = Math.round(v) + suffix;
+      },
+    });
+    return () => ctrl.stop();
+  }, [inView, value, suffix, reduce]);
+  return <span ref={ref}>{reduce ? value + suffix : "0" + suffix}</span>;
+}
+
+/* ───────────── MagBtn: botón con glow magnético en hover ───────────── */
+function MagBtn({ href, children, className = "" }: { href: string; children: React.ReactNode; className?: string }) {
+  const ref = useRef<HTMLAnchorElement>(null);
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const sx = useSpring(mx, { stiffness: 180, damping: 18 });
+  const sy = useSpring(my, { stiffness: 180, damping: 18 });
+  const move = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    mx.set((e.clientX - r.left - r.width / 2) * 0.18);
+    my.set((e.clientY - r.top - r.height / 2) * 0.18);
+  };
+  const leave = () => { mx.set(0); my.set(0); };
+  const btn =
+    "font-sans-tech inline-flex items-center justify-center gap-3 border border-white/20 bg-white/5 backdrop-blur-sm text-white hover:border-[#FF0033] hover:shadow-[0_0_28px_rgba(255,0,51,0.4)] hover:text-white transition-all duration-500 uppercase tracking-widest text-xs px-8 py-4 cursor-pointer";
+  return (
+    <motion.a
+      ref={ref}
+      href={href}
+      style={{ x: sx, y: sy }}
+      onMouseMove={move}
+      onMouseLeave={leave}
+      className={`${btn} ${className}`}
+    >
+      {children}
+    </motion.a>
+  );
+}
 
 const stagger: Variants = {
   hidden: {},
@@ -236,12 +286,12 @@ export function Hero() {
               transition={{ duration: 1, ease: EASE, delay: 1.7 }}
               className="flex flex-wrap gap-4"
             >
-              <a href="#inventario" className={btn}>
+              <MagBtn href="#inventario">
                 Explore builds <ArrowUpRight size={14} />
-              </a>
-              <a href="#contacto" className={btn}>
+              </MagBtn>
+              <MagBtn href="#contacto">
                 Start your project
-              </a>
+              </MagBtn>
             </motion.div>
           </motion.div>
         </div>
@@ -265,12 +315,20 @@ export function Stats() {
       className="border-y border-white/10 bg-[#0A0A0A]"
     >
       <div className="mx-auto grid max-w-[1400px] grid-cols-2 gap-y-12 px-6 py-20 md:grid-cols-4 md:px-10">
-        {STATS.map((s) => (
-          <motion.div key={s.l} variants={rise} className="text-center md:text-left">
-            <div className="font-serif-lux text-6xl font-light text-chalk md:text-7xl">{s.v}</div>
-            <div className={label + " mt-3"}>{s.l}</div>
-          </motion.div>
-        ))}
+        {STATS.map((s) => {
+          // Separa número y sufijo ("240+" → 240, "+")
+          const num = parseInt(s.v.replace(/\D/g, ""), 10);
+          const suffix = s.v.replace(/[0-9]/g, "");
+          const isNum = !isNaN(num);
+          return (
+            <motion.div key={s.l} variants={rise} className="text-center md:text-left">
+              <div className="font-serif-lux text-6xl font-light text-chalk md:text-7xl">
+                {isNum ? <CountUp value={num} suffix={suffix} /> : s.v}
+              </div>
+              <div className={label + " mt-3"}>{s.l}</div>
+            </motion.div>
+          );
+        })}
       </div>
     </motion.section>
   );
@@ -507,9 +565,9 @@ export function Contacto() {
             Cuéntanos qué tienes en mente. Te respondemos con una propuesta y fecha de taller en menos de 24 horas.
           </motion.p>
           <motion.div variants={rise} className="mt-12">
-            <a href={WHATSAPP} target="_blank" rel="noopener noreferrer" className={btn}>
+            <MagBtn href={WHATSAPP}>
               <MessageCircle size={15} /> Agendar por WhatsApp
-            </a>
+            </MagBtn>
           </motion.div>
         </div>
 
@@ -534,30 +592,53 @@ export function Contacto() {
 
 /* ───────────── PROMO VORTEX + FOOTER ───────────── */
 export function VortexPromo() {
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  /* el texto respira: sube levemente al hacer scroll sobre la sección */
+  const breathY = useTransform(scrollYProgress, [0, 1], ["4%", "-4%"]);
+  const breathO = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+  const lineW = useTransform(scrollYProgress, [0.1, 0.55], ["0%", "100%"]);
+
   return (
-    <section className="border-t border-white/10 bg-[#0A0A0A] px-6 py-28 md:px-10 md:py-36">
-      <motion.div variants={stagger} initial="hidden" whileInView="show" viewport={view} className="mx-auto flex max-w-[1400px] flex-col items-start justify-between gap-12 md:flex-row md:items-center">
+    <section ref={ref} className="relative overflow-hidden border-t border-white/10 bg-[#0A0A0A] px-6 py-28 md:px-10 md:py-36">
+      {/* línea roja animada de fondo */}
+      <motion.div style={{ width: lineW }} className="absolute left-0 top-0 h-px bg-gradient-to-r from-[#FF0033] to-transparent" />
+
+      <motion.div
+        style={{ y: breathY, opacity: breathO }}
+        className="mx-auto flex max-w-[1400px] flex-col items-start justify-between gap-12 md:flex-row md:items-center"
+      >
         <div>
-          <motion.p variants={rise} className="font-sans-tech text-xs uppercase tracking-[0.35em] text-neutral-400">
+          <p className="font-sans-tech text-xs uppercase tracking-[0.35em] text-neutral-400">
             <span className="mr-3 inline-block h-2 w-2 animate-pulse rounded-full bg-[#FF0033] align-middle" />
             Demo creado por VORTEX Digital Solutions
-          </motion.p>
-          <motion.div variants={rise} role="heading" aria-level={2} className="font-serif-lux mt-6 text-4xl leading-tight text-chalk md:text-6xl">
-            <span className="font-light">¿Quieres algo similar? </span>
-            <span className="font-normal italic text-neutral-400">Contáctanos.</span>
-          </motion.div>
-          <motion.p variants={rise} className="font-sans-tech mt-6 max-w-lg text-[14px] leading-[1.95] text-neutral-400">
+          </p>
+          <div role="heading" aria-level={2} className="font-serif-lux mt-6 text-4xl leading-tight text-chalk md:text-6xl">
+            <span className="font-light">¿Quieres algo </span>
+            <span className="font-normal italic text-neutral-400">similar?</span>
+          </div>
+          {/* separador con línea animada */}
+          <div className="relative mt-6 h-px w-full max-w-[180px] bg-white/10">
+            <motion.div
+              initial={{ width: "0%" }}
+              whileInView={{ width: "100%" }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ duration: 1.4, ease: EASE }}
+              className="absolute left-0 top-0 h-px bg-[#FF0033]"
+            />
+          </div>
+          <p className="font-sans-tech mt-6 max-w-lg text-[14px] leading-[1.95] text-neutral-400">
             Diseñamos páginas web de alto impacto para tu negocio: animaciones, fotografía y conversión.
-          </motion.p>
+          </p>
         </div>
-        <motion.div variants={rise} className="flex flex-wrap gap-4">
-          <a href={`${VORTEX_URL}/#contacto`} target="_blank" rel="noopener noreferrer" className={btn}>
+        <div className="flex flex-wrap gap-4">
+          <MagBtn href={`${VORTEX_URL}/#contacto`}>
             Quiero mi web <ArrowUpRight size={14} />
-          </a>
-          <a href={VORTEX_URL} target="_blank" rel="noopener noreferrer" className={btn}>
+          </MagBtn>
+          <MagBtn href={VORTEX_URL}>
             Ver VORTEX
-          </a>
-        </motion.div>
+          </MagBtn>
+        </div>
       </motion.div>
     </section>
   );

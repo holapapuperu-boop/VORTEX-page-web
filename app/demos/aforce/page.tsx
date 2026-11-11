@@ -1,4 +1,4 @@
-import AutoRotator360 from "./AutoRotator360";
+import ShowroomStory from "./ShowroomStory";
 import { Navbar, Hero, Stats, Atelier, Inventario, Contacto, VortexPromo, Footer } from "./sections";
 
 export default function AForcePage() {
@@ -7,7 +7,7 @@ export default function AForcePage() {
       <Navbar />
       <Hero />
       <Stats />
-      <AutoRotator360 />
+      <ShowroomStory />
       <Atelier />
       <Inventario />
       <Contacto />
