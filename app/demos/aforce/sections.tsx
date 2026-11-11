@@ -4,10 +4,13 @@ import Image from "next/image";
 import { useRef, useState } from "react";
 import {
   motion,
+  type MotionValue,
   useScroll,
   useTransform,
   useMotionValue,
   useSpring,
+  useReducedMotion,
+  easeOut,
   type Variants,
 } from "framer-motion";
 import { ArrowUpRight, Menu, X, Gauge, Zap, CalendarDays, MessageCircle, Send } from "lucide-react";
@@ -20,8 +23,12 @@ const stagger: Variants = {
   show: { transition: { staggerChildren: 0.14, delayChildren: 0.1 } },
 };
 const rise: Variants = {
-  hidden: { opacity: 0, y: 44 },
-  show: { opacity: 1, y: 0, transition: { duration: 1, ease: EASE } },
+  hidden: { opacity: 0, y: 64, filter: "blur(8px)" },
+  show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 1.1, ease: EASE } },
+};
+const chip: Variants = {
+  hidden: { opacity: 0, y: 24, scale: 0.94 },
+  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.8, ease: EASE } },
 };
 const view = { once: true, amount: 0.2 } as const;
 
@@ -135,102 +142,114 @@ export function Navbar() {
   );
 }
 
-/* ───────────── HERO ───────────── */
+/* ───────────── HERO: aceleración al scroll ───────────── */
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const imgScale = useTransform(scrollYProgress, [0, 1], [1, 1.18]);
-  const textY = useTransform(scrollYProgress, [0, 1], ["0%", "-14%"]);
-  const fade = useTransform(scrollYProgress, [0, 0.75], [1, 0]);
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
+  const p = useSpring(scrollYProgress, { stiffness: 110, damping: 26, mass: 0.45 });
+  const ez = { ease: easeOut };
+
+  // el auto "sale disparado": escala 1 → 1.5, avanza hacia arriba, desenfoque de movimiento y fundido
+  const carScale = useTransform(p, [0, 0.8], [1, 1.5], ez);
+  const carY = useTransform(p, [0, 0.8], ["0%", "-14%"], ez);
+  const carOpacity = useTransform(p, [0, 0.55, 0.92], [1, 1, 0], ez);
+  const carBlur = useTransform(p, [0, 0.12, 0.45], ["blur(0px)", "blur(4px)", "blur(0px)"]);
+  const glow = useTransform(p, [0, 0.6], [1, 1.8]);
+  const titleOpacity = useTransform(p, [0, 0.32], [1, 0], ez);
+  const titleY = useTransform(p, [0, 0.32], ["0px", "-70px"], ez);
+  const titleSpacing = useTransform(p, [0, 0.32], ["-0.02em", "0.04em"]);
+  const uiOpacity = useTransform(p, [0, 0.18], [1, 0]);
+
+  const carStyle = reduce ? {} : { scale: carScale, y: carY, opacity: carOpacity, filter: carBlur };
+  const titleStyle = reduce ? {} : { opacity: titleOpacity, y: titleY, letterSpacing: titleSpacing };
 
   return (
-    <section
-      id="top"
-      ref={ref}
-      className="relative aspect-[16/9] min-h-[100svh] w-full overflow-hidden bg-[#050505]"
-    >
-      {/* Foto a pantalla completa */}
-      <motion.div style={{ scale: imgScale }} className="absolute inset-0">
-        <Image
-          src={IMG.hero}
-          alt="Superdeportivo en la oscuridad con faros traseros rojos"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center"
-        />
-      </motion.div>
+    <section id="top" ref={ref} className={`relative w-full bg-[#050505] ${reduce ? "h-[100svh]" : "h-[260vh]"}`}>
+      <div className="sticky top-0 aspect-[16/9] h-[100svh] min-h-[100svh] w-full overflow-hidden">
+        <motion.div style={carStyle} className="absolute inset-0 will-change-transform">
+          <Image
+            src={IMG.hero}
+            alt="Superdeportivo en la oscuridad con faros traseros rojos"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center"
+          />
+        </motion.div>
 
-      {/* Overlay radial al centro + fusión con el fondo */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(255,0,51,0.12)_0%,_rgba(5,5,5,0.95)_95%)]" />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-black/40" />
+        <motion.div style={reduce ? {} : { opacity: glow }} className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(255,0,51,0.12)_0%,_rgba(5,5,5,0.95)_95%)]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-black/40" />
 
-      <motion.div
-        style={{ y: textY, opacity: fade }}
-        className="absolute inset-0 z-10 mx-auto flex max-w-[1400px] flex-col justify-end px-6 pb-20 pt-32 md:px-10 md:pb-28"
-      >
-        <motion.p
-          initial={{ opacity: 0, letterSpacing: "0.7em" }}
-          animate={{ opacity: 1, letterSpacing: "0.3em" }}
-          transition={{ duration: 1.8, ease: EASE, delay: 0.3 }}
-          className={label + " mb-8"}
-        >
-          <span className="mr-4 inline-block h-2 w-2 animate-pulse rounded-full bg-[#FF0033] align-middle" />
-          High-End · Detailing · Modificaciones
-        </motion.p>
-
-        <div
-          role="heading"
-          aria-level={1}
-          className="font-serif-lux text-[clamp(56px,12.5vw,200px)] leading-[0.9] tracking-[-0.02em] text-chalk"
-        >
-          <div className="overflow-hidden pb-[0.08em]">
-            <motion.span
-              initial={{ y: "110%", opacity: 0 }}
-              animate={{ y: "0%", opacity: 1 }}
-              transition={{ duration: 1.4, ease: EASE, delay: 0.5 }}
-              className="inline-block font-light"
-            >
-              REFUSE
-            </motion.span>
-          </div>
-          <div className="overflow-hidden pb-[0.08em]">
-            <motion.span
-              initial={{ y: "110%", opacity: 0 }}
-              animate={{ y: "0%", opacity: 1 }}
-              transition={{ duration: 1.4, ease: EASE, delay: 0.7 }}
-              className="inline-block font-normal italic"
-            >
-              ORDINARY.
-            </motion.span>
-          </div>
-        </div>
-
-        <div className="mt-12 flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
+        <div className="absolute inset-0 z-10 mx-auto flex max-w-[1400px] flex-col justify-end px-6 pb-20 pt-32 md:px-10 md:pb-28">
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: EASE, delay: 1.5 }}
-            className={label + " max-w-sm leading-[2]"}
+            initial={{ opacity: 0, letterSpacing: "0.7em" }}
+            animate={{ opacity: 1, letterSpacing: "0.35em" }}
+            transition={{ duration: 1.8, ease: EASE, delay: 0.3 }}
+            style={reduce ? {} : { opacity: uiOpacity }}
+            className={label + " mb-8"}
           >
-            Ingeniería, escape y protección para los autos que no admiten versión estándar.
+            <span className="mr-4 inline-block h-2 w-2 animate-pulse rounded-full bg-[#FF0033] align-middle" />
+            High-End · Detailing · Modificaciones
           </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: EASE, delay: 1.7 }}
-            className="flex flex-wrap gap-4"
+            role="heading"
+            aria-level={1}
+            style={titleStyle}
+            className="font-serif-lux text-[clamp(56px,12.5vw,200px)] leading-[0.9] text-chalk"
           >
-            <a href="#inventario" className={btn}>
-              Explore builds <ArrowUpRight size={14} />
-            </a>
-            <a href="#contacto" className={btn}>
-              Start your project
-            </a>
+            <div className="overflow-hidden pb-[0.08em]">
+              <motion.span
+                initial={{ y: "110%", opacity: 0 }}
+                animate={{ y: "0%", opacity: 1 }}
+                transition={{ duration: 1.4, ease: EASE, delay: 0.5 }}
+                className="inline-block font-light"
+              >
+                REFUSE
+              </motion.span>
+            </div>
+            <div className="overflow-hidden pb-[0.08em]">
+              <motion.span
+                initial={{ y: "110%", opacity: 0 }}
+                animate={{ y: "0%", opacity: 1 }}
+                transition={{ duration: 1.4, ease: EASE, delay: 0.7 }}
+                className="inline-block font-normal italic"
+              >
+                ORDINARY.
+              </motion.span>
+            </div>
+          </motion.div>
+
+          <motion.div style={reduce ? {} : { opacity: uiOpacity }} className="mt-12 flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: EASE, delay: 1.5 }}
+              className={label + " max-w-sm leading-[2]"}
+            >
+              Ingeniería, escape y protección para los autos que no admiten versión estándar.
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: EASE, delay: 1.7 }}
+              className="flex flex-wrap gap-4"
+            >
+              <a href="#inventario" className={btn}>
+                Explore builds <ArrowUpRight size={14} />
+              </a>
+              <a href="#contacto" className={btn}>
+                Start your project
+              </a>
+            </motion.div>
           </motion.div>
         </div>
-      </motion.div>
+
+        <motion.div style={reduce ? {} : { opacity: uiOpacity }} className="absolute bottom-6 left-1/2 z-10 hidden -translate-x-1/2 md:block">
+          <motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }} className="h-10 w-px bg-gradient-to-b from-[#FF0033] to-transparent" />
+        </motion.div>
+      </div>
     </section>
   );
 }
@@ -292,11 +311,11 @@ function AtelierRow({ item, flip }: { item: (typeof ATELIER)[number]; flip: bool
         <motion.p variants={rise} className="font-sans-tech mt-8 max-w-md text-[15px] leading-[1.95] text-neutral-400">
           {item.body}
         </motion.p>
-        <motion.ul variants={rise} className="mt-10 flex flex-wrap gap-3" style={{ padding: 0, listStyle: "none" }}>
+        <motion.ul variants={stagger} className="mt-10 flex flex-wrap gap-3" style={{ padding: 0, listStyle: "none" }}>
           {item.specs.map((sp) => (
-            <li key={sp} className={`${glass} font-sans-tech px-4 py-2 text-xs uppercase tracking-[0.2em] text-neutral-300`}>
+            <motion.li variants={chip} key={sp} className={`${glass} font-sans-tech px-4 py-2 text-xs uppercase tracking-[0.2em] text-neutral-300`}>
               {sp}
-            </li>
+            </motion.li>
           ))}
         </motion.ul>
       </motion.div>
@@ -346,7 +365,9 @@ export function Atelier() {
 }
 
 /* ───────────── INVENTARIO ───────────── */
-function BuildCard({ b }: { b: (typeof BUILDS)[number] }) {
+function BuildCard({ b, i, p }: { b: (typeof BUILDS)[number]; i: number; p: MotionValue<number> }) {
+  const off = [10, 60, 110][i % 3];
+  const lift = useTransform(p, [0, 1], [off, -off * 0.6]);
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
   const sx = useSpring(mx, { stiffness: 110, damping: 20 });
@@ -368,6 +389,7 @@ function BuildCard({ b }: { b: (typeof BUILDS)[number] }) {
     b.tag === "Disponible" ? "text-crimson border-crimson/40" : b.tag === "En proceso" ? "text-white border-white/30" : "text-neutral-500 border-white/10";
 
   return (
+    <motion.div style={{ y: lift }}>
     <motion.article variants={rise} style={{ perspective: 1200 }}>
       <motion.div
         onMouseMove={move}
@@ -416,10 +438,16 @@ function BuildCard({ b }: { b: (typeof BUILDS)[number] }) {
         </div>
       </motion.div>
     </motion.article>
+    </motion.div>
   );
 }
 
 export function Inventario() {
+  const gridRef = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: gridRef, offset: ["start end", "end start"] });
+  const sp = useSpring(scrollYProgress, { stiffness: 80, damping: 24, mass: 0.5 });
+  const still = useMotionValue(0.5);
   return (
     <section id="inventario" className={`border-t border-white/10 bg-[#0A0A0A] ${section}`}>
       <div className="mx-auto max-w-[1400px]">
@@ -436,9 +464,9 @@ export function Inventario() {
           </motion.p>
         </motion.div>
 
-        <motion.div variants={stagger} initial="hidden" whileInView="show" viewport={view} className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {BUILDS.map((b) => (
-            <BuildCard key={b.name} b={b} />
+        <motion.div ref={gridRef} variants={stagger} initial="hidden" whileInView="show" viewport={view} className="grid gap-8 pb-28 md:grid-cols-2 lg:grid-cols-3">
+          {BUILDS.map((b, i) => (
+            <BuildCard key={b.name} b={b} i={i} p={reduce ? still : sp} />
           ))}
         </motion.div>
       </div>

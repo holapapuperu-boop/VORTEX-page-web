@@ -57,3 +57,32 @@ export const BUILDS = [
   { name: "GT-R Nismo", make: "Nissan", tag: "En proceso", year: "2020", hp: "600 HP", zero: "2.9 s", img: IMG.gtr },
   { name: "F40", make: "Ferrari", tag: "Vendido", year: "1991", hp: "471 HP", zero: "4.1 s", img: IMG.wheel },
 ];
+
+/* Secuencia del showroom 360°. Para un giro real, reemplaza `frames` por 24–72 fotos
+   de plataforma giratoria del mismo auto: el componente interpola cualquier cantidad. */
+export const ROTATOR = [
+  {
+    src: IMG.gtr,
+    angle: "Frontal",
+    pos: "50% 62%",
+    hotspot: { x: 51, y: 58, side: "right", title: "Luces Matrix LED", detail: "Haz adaptativo que recorta el tráfico en sentido contrario sin apagar la luz alta." },
+  },
+  {
+    src: IMG.porsche,
+    angle: "Tres cuartos",
+    pos: "50% 50%",
+    hotspot: { x: 88, y: 24, side: "left", title: "Alerón de Carbono", detail: "Fibra de carbono pre-impregnada: carga aerodinámica real a velocidad de pista." },
+  },
+  {
+    src: IMG.wheel,
+    angle: "Lateral",
+    pos: "50% 52%",
+    hotspot: { x: 51, y: 50, side: "right", title: "Rines de Forja 21″", detail: "Monobloque forjado 6061-T6, 9 kg menos de masa no suspendida por eje." },
+  },
+  {
+    src: IMG.hero,
+    angle: "Trasera",
+    pos: "50% 55%",
+    hotspot: { x: 88, y: 74, side: "left", title: "Escape Deportivo Titanium", detail: "Titanio grado 5 con válvulas activas, afinado en dinamómetro." },
+  },
+];
