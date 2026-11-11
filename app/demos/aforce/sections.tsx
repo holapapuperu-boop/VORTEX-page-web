@@ -197,14 +197,18 @@ export function Hero() {
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
-  const p = useSpring(scrollYProgress, { stiffness: 110, damping: 26, mass: 0.45 });
+  // spring más rígido y con restDelta: se asienta rápido y no arrastra inercia cuando el sticky se suelta
+  const p = useSpring(scrollYProgress, { stiffness: 160, damping: 32, mass: 0.4, restDelta: 0.0005 });
   const ez = { ease: easeOut };
 
   // el auto "sale disparado": escala 1 → 1.5, avanza hacia arriba, desenfoque de movimiento y fundido
-  const carScale = useTransform(p, [0, 0.8], [1, 1.5], ez);
-  const carY = useTransform(p, [0, 0.8], ["0%", "-14%"], ez);
-  const carOpacity = useTransform(p, [0, 0.55, 0.92], [1, 1, 0], ez);
-  const carBlur = useTransform(p, [0, 0.12, 0.45], ["blur(0px)", "blur(4px)", "blur(0px)"]);
+  // toda la animación termina en p=0.78; entre 0.62 y 0.86 una cortina negra cubre la escena,
+  // así el despegue del sticky ocurre sobre negro y nunca se ve la "pelea" con el scroll
+  const carScale = useTransform(p, [0, 0.78], [1, 1.5], ez);
+  const carY = useTransform(p, [0, 0.78], ["0%", "-14%"], ez);
+  const carOpacity = useTransform(p, [0, 0.45, 0.78], [1, 1, 0], ez);
+  const carBlur = useTransform(p, [0, 0.12, 0.4], ["blur(0px)", "blur(4px)", "blur(0px)"]);
+  const blackout = useTransform(p, [0.62, 0.86], [0, 1]);
   const glow = useTransform(p, [0, 0.6], [1, 1.8]);
   const titleOpacity = useTransform(p, [0, 0.32], [1, 0], ez);
   const titleY = useTransform(p, [0, 0.32], ["0px", "-70px"], ez);
@@ -215,7 +219,7 @@ export function Hero() {
   const titleStyle = reduce ? {} : { opacity: titleOpacity, y: titleY, letterSpacing: titleSpacing };
 
   return (
-    <section id="top" ref={ref} className={`relative w-full bg-[#050505] ${reduce ? "h-[100svh]" : "h-[260vh]"}`}>
+    <section id="top" ref={ref} className={`relative w-full bg-[#050505] ${reduce ? "h-[100svh]" : "h-[180vh]"}`}>
       <div className="sticky top-0 aspect-[16/9] h-[100svh] min-h-[100svh] w-full overflow-hidden">
         <motion.div style={carStyle} className="absolute inset-0 will-change-transform">
           <Image
@@ -299,6 +303,13 @@ export function Hero() {
         <motion.div style={reduce ? {} : { opacity: uiOpacity }} className="absolute bottom-6 left-1/2 z-10 hidden -translate-x-1/2 md:block">
           <motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }} className="h-10 w-px bg-gradient-to-b from-[#FF0033] to-transparent" />
         </motion.div>
+
+        {/* cortina a negro: cubre el momento en que el sticky se suelta */}
+        <motion.div
+          aria-hidden
+          style={{ opacity: reduce ? 0 : blackout }}
+          className="pointer-events-none absolute inset-0 z-20 bg-[#050505]"
+        />
       </div>
     </section>
   );

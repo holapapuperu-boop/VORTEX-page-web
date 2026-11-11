@@ -388,8 +388,8 @@ export default function ShowroomStory() {
         </motion.p>
       </motion.div>
 
-      {/* ── Sticky wrapper ── */}
-      <div className="sticky top-0 h-screen overflow-hidden">
+      {/* ── Sticky wrapper — empieza bajo la navbar (80px) ── */}
+      <div className="sticky top-20 h-[calc(100vh-80px)] overflow-hidden">
 
         {/* Encabezado que entra sólo la primera vez */}
         <motion.div
