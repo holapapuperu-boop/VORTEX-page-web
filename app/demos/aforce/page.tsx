@@ -1,13 +1,13 @@
-import ShowroomStory from "./ShowroomStory";
-import { Navbar, Hero, Stats, Atelier, Inventario, Contacto, VortexPromo, Footer } from "./sections";
+import { HeroClient, ShowroomClient } from "./ClientSections";
+import { Navbar, Stats, Atelier, Inventario, Contacto, VortexPromo, Footer } from "./sections";
 
 export default function AForcePage() {
   return (
     <main className="min-h-screen overflow-x-clip bg-ink font-sans-tech text-chalk antialiased">
       <Navbar />
-      <Hero />
+      <HeroClient />
       <Stats />
-      <ShowroomStory />
+      <ShowroomClient />
       <Atelier />
       <Inventario />
       <Contacto />

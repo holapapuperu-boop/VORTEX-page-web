@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import {
   motion,
   useScroll,
@@ -326,6 +326,13 @@ export default function ShowroomStory() {
   const reduce = useReducedMotion();
   const outer = useRef<HTMLElement>(null);
 
+  // Hydration guard: evita que el showroom aparezca en negro mientras el JS carga.
+  // Hasta que el componente se monta en el cliente, se muestra el primer panel estático.
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const { scrollYProgress } = useScroll({
     target: outer,
     offset: ["start start", "end end"],
@@ -342,6 +349,47 @@ export default function ShowroomStory() {
     const i = Math.min(N - 1, Math.floor(v * N));
     return ROTATOR[i].angle;
   });
+
+  // Mientras el JS no está listo, mostrar el primer panel estático.
+  // Esto evita la pantalla negra en la primera carga en móviles lentos.
+  if (!isMounted) {
+    const f0 = ROTATOR[0];
+    return (
+      <section
+        id="showroom"
+        className="relative border-t border-white/10 bg-[#050505]"
+        style={{ minHeight: "100vh" }}
+      >
+        <Image
+          src={f0.src}
+          alt={`Vista ${f0.angle}`}
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover opacity-60"
+          style={{ objectPosition: f0.pos }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#050505]/90 via-[#050505]/30 to-[#050505]/20" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#050505]/75 via-transparent to-transparent" />
+        <div className="absolute inset-0 flex flex-col justify-end px-6 pb-20 md:px-10 md:pb-28">
+          <p className="font-sans-tech mb-6 text-[9px] uppercase tracking-[0.4em] text-neutral-400">
+            <span className="mr-3 inline-block h-1.5 w-1.5 rounded-full bg-[#FF0033] align-middle" />
+            Showroom — 01 / 04 · {f0.angle}
+          </p>
+          <div className="font-serif-lux text-[clamp(42px,8vw,110px)] leading-[0.95] text-chalk" role="heading" aria-level={2}>
+            <div className="font-light">{f0.hotspot.title.split(" ").slice(0, Math.ceil(f0.hotspot.title.split(" ").length / 2)).join(" ")}</div>
+            <div className="font-normal italic">{f0.hotspot.title.split(" ").slice(Math.ceil(f0.hotspot.title.split(" ").length / 2)).join(" ")}</div>
+          </div>
+          <div className="my-6 h-px w-full max-w-[260px] bg-[#FF0033]/60" />
+          <p className="font-sans-tech max-w-sm text-[13px] leading-[1.9] text-neutral-300">{f0.hotspot.detail}</p>
+        </div>
+        <div className="absolute bottom-6 left-6 right-6 flex items-center gap-4 md:left-10 md:right-10">
+          <div className="h-px flex-1 bg-white/10" />
+          <span className="font-sans-tech text-[9px] uppercase tracking-[0.35em] text-neutral-500">Scroll para explorar</span>
+        </div>
+      </section>
+    );
+  }
 
   if (reduce) {
     /* ── Versión estática reduced-motion ── */

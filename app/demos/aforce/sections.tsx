@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import {
   motion,
   type MotionValue,
@@ -196,17 +196,25 @@ export function Navbar() {
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
+
+  // Detectar dispositivo de baja potencia: quita blur animado para liberar GPU
+  const [isLite, setIsLite] = useState(false);
+  useEffect(() => {
+    const nav = navigator as Navigator & { deviceMemory?: number };
+    const lite =
+      (nav.deviceMemory !== undefined && nav.deviceMemory <= 4) ||
+      navigator.hardwareConcurrency <= 4;
+    setIsLite(lite);
+  }, []);
+
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
-  // spring más rígido y con restDelta: se asienta rápido y no arrastra inercia cuando el sticky se suelta
   const p = useSpring(scrollYProgress, { stiffness: 160, damping: 32, mass: 0.4, restDelta: 0.0005 });
   const ez = { ease: easeOut };
 
-  // el auto "sale disparado": escala 1 → 1.5, avanza hacia arriba, desenfoque de movimiento y fundido
-  // toda la animación termina en p=0.78; entre 0.62 y 0.86 una cortina negra cubre la escena,
-  // así el despegue del sticky ocurre sobre negro y nunca se ve la "pelea" con el scroll
-  const carScale = useTransform(p, [0, 0.78], [1, 1.5], ez);
+  const carScale = useTransform(p, [0, 0.78], [1, isLite ? 1.2 : 1.5], ez);
   const carY = useTransform(p, [0, 0.78], ["0%", "-14%"], ez);
   const carOpacity = useTransform(p, [0, 0.45, 0.78], [1, 1, 0], ez);
+  // En modo lite no animamos blur — es el efecto más caro para GPU móvil
   const carBlur = useTransform(p, [0, 0.12, 0.4], ["blur(0px)", "blur(4px)", "blur(0px)"]);
   const blackout = useTransform(p, [0.62, 0.86], [0, 1]);
   const glow = useTransform(p, [0, 0.6], [1, 1.8]);
@@ -215,7 +223,12 @@ export function Hero() {
   const titleSpacing = useTransform(p, [0, 0.32], ["-0.02em", "0.04em"]);
   const uiOpacity = useTransform(p, [0, 0.18], [1, 0]);
 
-  const carStyle = reduce ? {} : { scale: carScale, y: carY, opacity: carOpacity, filter: carBlur };
+  const carStyle = reduce ? {} : {
+    scale: carScale,
+    y: carY,
+    opacity: carOpacity,
+    ...(isLite ? {} : { filter: carBlur }), // sin blur en móvil de baja potencia
+  };
   const titleStyle = reduce ? {} : { opacity: titleOpacity, y: titleY, letterSpacing: titleSpacing };
 
   return (
