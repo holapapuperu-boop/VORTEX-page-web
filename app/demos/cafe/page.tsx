@@ -7,11 +7,13 @@
 
 import React, { useRef, useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   motion,
   useScroll,
   useTransform,
   useInView,
+  useReducedMotion,
   AnimatePresence,
 } from "framer-motion";
 import {
@@ -97,6 +99,20 @@ function buildWhatsApp(cart: CartItem[]): string {
 // ─── Curvas ───────────────────────────────────────────────────────────────────
 const EASE_EDITORIAL = [0.23, 1, 0.32, 1] as [number, number, number, number];
 const EASE_DRAWER    = [0.32, 0.72, 0, 1]  as [number, number, number, number];
+
+// Intensidad del parallax: completo en desktop, suavizado < 768px, nulo con prefers-reduced-motion
+function useParallaxStrength() {
+  const reduce = useReducedMotion();
+  const [mobile, setMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const update = () => setMobile(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+  return reduce ? 0 : mobile ? 0.45 : 1;
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 1. NAVBAR
@@ -223,10 +239,12 @@ function Hero({ onCarta }: { onCarta: () => void }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
 
-  // Capas a distinta velocidad (GPU via transform)
-  const yTitle = useTransform(scrollYProgress, [0, 1], ["0%", "-18%"]);
-  const yPhoto = useTransform(scrollYProgress, [0, 1], ["0%", "-10%"]);
-  const yCard  = useTransform(scrollYProgress, [0, 1], ["0%", "-6%"]);
+  // 3 capas a distinta velocidad (px, solo transform → GPU):
+  // fondo (lento, +) · foto (media) · tarjeta (rápida, −) = profundidad real
+  const k = useParallaxStrength();
+  const yTitle = useTransform(scrollYProgress, [0, 1], [0, 90 * k]);
+  const yPhoto = useTransform(scrollYProgress, [0, 1], [0, -50 * k]);
+  const yCard  = useTransform(scrollYProgress, [0, 1], [0, -130 * k]);
 
   return (
     <section
@@ -235,28 +253,11 @@ function Hero({ onCarta }: { onCarta: () => void }) {
       className="relative overflow-hidden"
       style={{ minHeight: "100svh", backgroundColor: "#F7F4EF" }}
     >
-      {/* Capa 1 — Watermark gigante de fondo */}
-      <motion.div
-        style={{ y: yTitle, willChange: "transform" }}
-        className="absolute inset-0 flex items-center justify-center select-none pointer-events-none"
-      >
-        <span
-          className="text-[22vw] md:text-[18vw] font-light leading-none tracking-tighter"
-          style={{
-            fontFamily: "'Newsreader', serif",
-            color: "#E6E0D6",
-            whiteSpace: "nowrap",
-          }}
-        >
-          ORIGEN
-        </span>
-      </motion.div>
-
       {/* Layout principal */}
-      <div className="relative z-10 max-w-[1120px] mx-auto px-5 min-h-[100svh] flex flex-col md:flex-row items-center md:items-end pb-16 pt-32 gap-8 md:gap-16">
+      <div className="relative max-w-[1120px] mx-auto px-5 min-h-[100svh] flex flex-col md:flex-row items-center pb-16 pt-28 gap-14 md:gap-16">
 
         {/* Columna izq — Copy */}
-        <div className="flex-1 flex flex-col justify-end">
+        <div className="relative z-10 flex-1 flex flex-col justify-center">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -275,7 +276,7 @@ function Hero({ onCarta }: { onCarta: () => void }) {
             style={{ fontFamily: "'Newsreader', serif", color: "#1C1917" }}
           >
             Donde el{" "}
-            <em style={{ fontStyle: "italic", color: "#F7F4EF" }}>grano</em>
+            <em style={{ fontStyle: "italic", color: "#B45309" }}>grano</em>
             <br />
             cuenta su historia.
           </motion.h1>
@@ -326,15 +327,28 @@ function Hero({ onCarta }: { onCarta: () => void }) {
         </div>
 
         {/* Columna der — Composición fotográfica */}
-        <div className="relative w-full md:w-[380px] lg:w-[420px] flex-shrink-0">
+        <div className="relative z-10 w-full md:w-[380px] lg:w-[420px] flex-shrink-0">
 
-          {/* Foto principal — heroDrink */}
+          {/* Capa 1 — Watermark detrás de la foto: móvil asoma por arriba, desktop por los lados */}
+          <div
+            aria-hidden
+            className="absolute z-0 left-1/2 -translate-x-1/2 top-0 -translate-y-[40%] md:top-1/2 md:-translate-y-1/2 select-none pointer-events-none"
+          >
+            <motion.span
+              style={{ y: yTitle, willChange: "transform", fontFamily: "'Newsreader', serif", color: "#E6E0D6", whiteSpace: "nowrap" }}
+              className="block font-light leading-none tracking-tighter text-[27vw] md:text-[17vw] lg:text-[min(14vw,220px)]"
+            >
+              ORIGEN
+            </motion.span>
+          </div>
+
+          {/* Capa 2 — Foto principal — heroDrink */}
           <motion.div
             style={{ y: yPhoto, willChange: "transform" }}
             initial={{ clipPath: "inset(0 0 100% 0)" }}
             animate={{ clipPath: "inset(0 0 0% 0)" }}
             transition={{ delay: 0.4, duration: 0.9, ease: EASE_EDITORIAL }}
-            className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden"
+            className="relative z-10 w-full aspect-[4/5] rounded-2xl overflow-hidden"
           >
             <Image
               src={PHOTOS.heroDrink}
@@ -346,34 +360,32 @@ function Hero({ onCarta }: { onCarta: () => void }) {
             />
           </motion.div>
 
-          {/* Tarjeta flotante — heroDetail */}
+          {/* Capa 3 — Ficha de cata flotante (parallax más rápido) */}
           <motion.div
-            style={{ y: yCard, willChange: "transform" }}
+            style={{ y: yCard, willChange: "transform", backgroundColor: "rgba(247,244,239,0.9)", border: "1px solid #E2DDD5" }}
             initial={{ opacity: 0, x: -20, scale: 0.95 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
             transition={{ delay: 0.8, duration: 0.7, ease: EASE_EDITORIAL }}
-            className="absolute -left-4 md:-left-14 bottom-10 w-44 md:w-52 rounded-xl overflow-hidden shadow-2xl"
+            className="absolute z-20 -left-3 md:-left-24 bottom-8 w-[15rem] md:w-56 rounded-xl p-4 backdrop-blur-md shadow-xl"
           >
-            <div className="relative aspect-[4/5]">
-              <Image
-                src={PHOTOS.heroDetail}
-                alt="Extracción de espresso ORIGEN"
-                fill
-                className="object-cover object-center"
-                sizes="208px"
-              />
-            </div>
-            <div className="px-3 py-2.5" style={{ backgroundColor: "#F7F4EF" }}>
-              <div className="flex items-center gap-1.5 mb-0.5">
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                <span className="text-[11px] font-semibold" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#1C1917" }}>
-                  Abierto hoy
-                </span>
-              </div>
-              <span className="text-[10px]" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#57534E" }}>
-                Cierra 7:00 PM
+            <div className="flex items-center gap-2 mb-3 pb-3" style={{ borderBottom: "1px solid #E2DDD5" }}>
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full rounded-full animate-ping opacity-60" style={{ backgroundColor: "#B45309" }} />
+                <span className="relative inline-flex h-2 w-2 rounded-full" style={{ backgroundColor: "#B45309" }} />
+              </span>
+              <span className="text-[11px] font-semibold" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#1C1917" }}>
+                Abierto hoy · Cierra 7:00 PM
               </span>
             </div>
+            <p className="text-[10px] font-semibold tracking-[0.16em] uppercase mb-1" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#B45309" }}>
+              Grano de la semana
+            </p>
+            <p className="text-lg leading-tight mb-2" style={{ fontFamily: "'Newsreader', serif", color: "#1C1917" }}>
+              Pacamara Honey — <em style={{ fontStyle: "italic", color: "inherit" }}>Finca Las Nubes</em>
+            </p>
+            <p className="text-[11px] leading-relaxed" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#57534E" }}>
+              Notas de panela, durazno y cacao tostado.
+            </p>
           </motion.div>
         </div>
       </div>
@@ -407,34 +419,40 @@ function Tueste() {
           </h2>
         </div>
 
-        {/* Grid de especificaciones */}
-        <div ref={ref} className="grid grid-cols-1 md:grid-cols-3">
-          {specs.map((s, i) => (
-            <motion.div
-              key={s.num}
-              initial={{ opacity: 0, y: 32 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: i * 0.12, duration: 0.7, ease: EASE_EDITORIAL }}
-              className="py-10 md:py-0 md:px-8 first:md:pl-0 last:md:pr-0"
-              style={{
-                borderRight: i < 2 ? "1px solid #E2DDD5" : "none",
-                borderTop: i > 0 ? "1px solid #E2DDD5" : "none",
-              }}
-            >
-              <span
-                className="block text-5xl font-light mb-6 leading-none"
-                style={{ fontFamily: "'Newsreader', serif", color: "#E6E0D6" }}
+        {/* 2 columnas asimétricas: especificaciones (izq) + foto de extracción (der) */}
+        <div ref={ref} className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16 items-center">
+          <div className="md:col-span-7">
+            {specs.map((s, i) => (
+              <motion.div
+                key={s.num}
+                initial={{ opacity: 0, y: 32 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ delay: i * 0.12, duration: 0.7, ease: EASE_EDITORIAL }}
+                className="flex gap-6 md:gap-8 py-8 first:pt-0 last:pb-0"
+                style={{ borderBottom: i < specs.length - 1 ? "1px solid #E2DDD5" : "none" }}
               >
-                {s.num}
-              </span>
-              <h3 className="text-xl font-medium mb-3" style={{ fontFamily: "'Newsreader', serif", color: "#1C1917" }}>
-                {s.titulo}
-              </h3>
-              <p className="text-sm leading-relaxed" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#57534E" }}>
-                {s.desc}
-              </p>
-            </motion.div>
-          ))}
+                <span
+                  className="block w-14 md:w-20 flex-shrink-0 text-5xl md:text-6xl font-light leading-none tabular-nums"
+                  style={{ fontFamily: "'Newsreader', serif", color: "#E6E0D6" }}
+                >
+                  {s.num}
+                </span>
+                <div>
+                  <h3 className="text-xl md:text-2xl font-medium mb-2" style={{ fontFamily: "'Newsreader', serif", color: "#1C1917" }}>
+                    {s.titulo}
+                  </h3>
+                  <p className="text-sm leading-relaxed max-w-md" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#57534E" }}>
+                    {s.desc}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Foto vertical con revelado clip-path */}
+          <div className="md:col-span-5 relative w-full aspect-[4/5] rounded-2xl overflow-hidden">
+            <RevealPhoto src={PHOTOS.heroDetail} alt="Extracción de espresso ORIGEN" sizes="(max-width: 768px) 100vw, 40vw" />
+          </div>
         </div>
       </div>
     </section>
@@ -444,7 +462,7 @@ function Tueste() {
 // ─────────────────────────────────────────────────────────────────────────────
 // 4a. FAVORITOS DE TEMPORADA
 // ─────────────────────────────────────────────────────────────────────────────
-function RevealPhoto({ src, alt, sizes }: { src: string; alt: string; sizes: string }) {
+function RevealPhoto({ src, alt, sizes, imgClassName = "" }: { src: string; alt: string; sizes: string; imgClassName?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-60px" });
 
@@ -456,7 +474,7 @@ function RevealPhoto({ src, alt, sizes }: { src: string; alt: string; sizes: str
       transition={{ duration: 0.7, ease: EASE_EDITORIAL }}
       className="w-full h-full"
     >
-      <Image src={src} alt={alt} fill className="object-cover object-center" sizes={sizes} />
+      <Image src={src} alt={alt} fill className={`object-cover object-center ${imgClassName}`} sizes={sizes} />
     </motion.div>
   );
 }
@@ -499,7 +517,7 @@ function Favoritos({ onAddToCart }: { onAddToCart: (item: MenuItem) => void }) {
             </p>
             <h2 className="text-4xl md:text-5xl font-light" style={{ fontFamily: "'Newsreader', serif", color: "#1C1917" }}>
               Favoritos de{" "}
-              <em style={{ fontStyle: "italic" }}>temporada.</em>
+              <em style={{ fontStyle: "italic", color: "#B45309" }}>temporada.</em>
             </h2>
           </div>
           <p className="text-sm max-w-xs" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#57534E" }}>
@@ -514,12 +532,17 @@ function Favoritos({ onAddToCart }: { onAddToCart: (item: MenuItem) => void }) {
               initial={{ opacity: 0, y: 24 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: i * 0.1, duration: 0.7, ease: EASE_EDITORIAL }}
-              className="rounded-2xl overflow-hidden"
+              className="group rounded-2xl overflow-hidden"
               style={{ backgroundColor: "#F7F4EF" }}
             >
-              {/* Foto */}
+              {/* Foto con zoom sutil en hover */}
               <div className="relative w-full aspect-[4/5] overflow-hidden">
-                <RevealPhoto src={f.foto} alt={f.nombre} sizes="(max-width: 640px) 100vw, 33vw" />
+                <RevealPhoto
+                  src={f.foto}
+                  alt={f.nombre}
+                  sizes="(max-width: 640px) 100vw, 33vw"
+                  imgClassName="group-hover:scale-[1.03] transition-transform duration-500 ease-out"
+                />
               </div>
 
               {/* Info */}
@@ -539,7 +562,7 @@ function Favoritos({ onAddToCart }: { onAddToCart: (item: MenuItem) => void }) {
                   </span>
                   <button
                     onClick={() => onAddToCart(f.item)}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-semibold transition-all duration-[160ms] active:scale-[0.97] min-h-[44px]"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-semibold active:scale-95 transition-transform duration-150 min-h-[44px]"
                     style={{
                       fontFamily: "'Plus Jakarta Sans', sans-serif",
                       backgroundColor: "#1C1917",
@@ -661,7 +684,7 @@ function Carta({
                     {qty === 0 ? (
                       <button
                         onClick={() => onAdd(item)}
-                        className="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-[160ms] active:scale-[0.97] min-h-[44px] min-w-[44px]"
+                        className="w-9 h-9 rounded-full flex items-center justify-center active:scale-95 transition-transform duration-150 min-h-[44px] min-w-[44px]"
                         style={{
                           backgroundColor: "#1C1917",
                           color: "#F7F4EF",
@@ -675,7 +698,7 @@ function Carta({
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => onRemove(item.id)}
-                          className="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-[160ms] active:scale-[0.97] min-h-[44px] min-w-[44px] border"
+                          className="w-9 h-9 rounded-full flex items-center justify-center active:scale-95 transition-transform duration-150 min-h-[44px] min-w-[44px] border"
                           style={{
                             borderColor: "#E2DDD5",
                             color: "#1C1917",
@@ -690,7 +713,7 @@ function Carta({
                         </span>
                         <button
                           onClick={() => onAdd(item)}
-                          className="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-[160ms] active:scale-[0.97] min-h-[44px] min-w-[44px]"
+                          className="w-9 h-9 rounded-full flex items-center justify-center active:scale-95 transition-transform duration-150 min-h-[44px] min-w-[44px]"
                           style={{
                             backgroundColor: "#B45309",
                             color: "#F7F4EF",
@@ -796,12 +819,6 @@ function Espacio() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-60px" });
 
-  const horarios = [
-    { dia: "Lunes – Viernes", hora: "7:00 AM – 7:00 PM" },
-    { dia: "Sábado",          hora: "8:00 AM – 7:00 PM" },
-    { dia: "Domingo",         hora: "8:00 AM – 6:00 PM" },
-  ];
-
   return (
     <section id="espacio" className="py-20 md:py-28 overflow-x-clip" style={{ backgroundColor: "#241C18" }}>
       <div className="max-w-[1120px] mx-auto px-5">
@@ -813,98 +830,116 @@ function Espacio() {
           </p>
           <h2 className="text-4xl md:text-5xl font-light" style={{ fontFamily: "'Newsreader', serif", color: "#F7F4EF" }}>
             Un espacio para{" "}
-            <em style={{ fontStyle: "italic" }}>trabajar, leer</em>
+            <em style={{ fontStyle: "italic", color: "#E08E45" }}>trabajar, leer</em>
             <br className="hidden md:block" /> y quedarte.
           </h2>
         </div>
 
-        {/* Grid asimétrico */}
-        <div ref={ref} className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-16">
+        {/* Fotos verticales 4:5 asimétricas + barra de datos en 3 columnas */}
+        <div ref={ref} className="mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 mb-6 md:mb-8">
 
-          {/* Foto salon — protagonista */}
-          <motion.div
-            initial={{ clipPath: "inset(0 0 100% 0)" }}
-            animate={inView ? { clipPath: "inset(0 0 0% 0)" } : {}}
-            transition={{ duration: 0.8, ease: EASE_EDITORIAL }}
-            className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden md:row-span-2"
-          >
-            <Image
-              src={PHOTOS.espacioSalon}
-              alt="Salón principal ORIGEN"
-              fill
-              className="object-cover object-center"
-              sizes="(max-width: 768px) 100vw, 50vw"
-            />
-          </motion.div>
+            {/* Foto salón — protagonista */}
+            <motion.div
+              initial={{ clipPath: "inset(0 0 100% 0)" }}
+              animate={inView ? { clipPath: "inset(0 0 0% 0)" } : {}}
+              transition={{ duration: 0.6, ease: EASE_EDITORIAL }}
+              className="md:col-span-7 relative w-full aspect-[4/5] rounded-2xl overflow-hidden"
+            >
+              <Image
+                src={PHOTOS.espacioSalon}
+                alt="Salón principal ORIGEN"
+                fill
+                className="object-cover object-center"
+                sizes="(max-width: 768px) 100vw, 60vw"
+              />
+            </motion.div>
 
-          {/* Foto trabajo */}
-          <motion.div
-            initial={{ clipPath: "inset(0 0 100% 0)" }}
-            animate={inView ? { clipPath: "inset(0 0 0% 0)" } : {}}
-            transition={{ delay: 0.15, duration: 0.8, ease: EASE_EDITORIAL }}
-            className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden"
-          >
-            <Image
-              src={PHOTOS.espacioTrabajo}
-              alt="Ambiente de trabajo ORIGEN"
-              fill
-              className="object-cover object-center"
-              sizes="(max-width: 768px) 100vw, 50vw"
-            />
-          </motion.div>
+            {/* Columna derecha: frase editorial arriba + foto de trabajo abajo (sin huecos) */}
+            <div className="md:col-span-5 flex flex-col justify-between gap-6 md:gap-8">
+              <motion.p
+                initial={{ opacity: 0, y: 16 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ delay: 0.2, duration: 0.7, ease: EASE_EDITORIAL }}
+                className="text-2xl md:text-[1.7rem] font-light leading-snug"
+                style={{ fontFamily: "'Newsreader', serif", color: "#D6CFC7" }}
+              >
+                Mesas largas, luz natural y una barra con enchufes para quedarte toda la mañana.
+              </motion.p>
 
-          {/* Bloque de info */}
+              <motion.div
+                initial={{ clipPath: "inset(0 0 100% 0)" }}
+                animate={inView ? { clipPath: "inset(0 0 0% 0)" } : {}}
+                transition={{ delay: 0.15, duration: 0.6, ease: EASE_EDITORIAL }}
+                className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden"
+              >
+                <Image
+                  src={PHOTOS.espacioTrabajo}
+                  alt="Ambiente de trabajo ORIGEN"
+                  fill
+                  className="object-cover object-center"
+                  sizes="(max-width: 768px) 100vw, 40vw"
+                />
+              </motion.div>
+            </div>
+          </div>
+
+          {/* Barra horizontal de 3 columnas: Horario · Wi-Fi/Enchufes · Maps */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.3, duration: 0.7, ease: EASE_EDITORIAL }}
-            className="rounded-2xl p-6 md:p-8"
-            style={{ backgroundColor: "rgba(255,255,255,0.05)" }}
+            className="grid grid-cols-1 md:grid-cols-3 rounded-2xl overflow-hidden"
+            style={{ border: "1px solid rgba(226,221,213,0.15)", backgroundColor: "rgba(255,255,255,0.04)" }}
           >
-            {/* Horarios */}
-            <h3 className="text-base font-semibold mb-4 tracking-wide uppercase text-xs" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#B45309", letterSpacing: "0.14em" }}>
-              Horario
-            </h3>
-            <div className="space-y-3 mb-7">
-              {horarios.map((h) => (
-                <div key={h.dia} className="flex justify-between items-center" style={{ borderBottom: "1px solid rgba(226,221,213,0.1)", paddingBottom: "0.75rem" }}>
-                  <span className="text-sm" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#D6CFC7" }}>{h.dia}</span>
-                  <span className="text-sm font-medium tabular-nums" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#F7F4EF" }}>{h.hora}</span>
-                </div>
-              ))}
+            {/* Col 1 — Horario */}
+            <div className="p-6 md:p-8">
+              <p className="flex items-center gap-2 text-xs font-semibold tracking-[0.16em] uppercase mb-4" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#E08E45" }}>
+                <Clock size={14} /> Horario
+              </p>
+              <p className="text-2xl font-light mb-1" style={{ fontFamily: "'Newsreader', serif", color: "#F7F4EF" }}>
+                Lunes a Domingo
+              </p>
+              <p className="text-base font-medium tabular-nums" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#D6CFC7" }}>
+                7:00 AM – 7:00 PM
+              </p>
             </div>
 
-            {/* Amenidades */}
-            <div className="flex flex-wrap gap-4 mb-7">
-              <div className="flex items-center gap-2">
-                <Wifi size={16} style={{ color: "#B45309" }} />
-                <span className="text-sm" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#D6CFC7" }}>Wi-Fi 300 Mbps</span>
+            {/* Col 2 — Wi-Fi / Enchufes */}
+            <div className="p-6 md:p-8 border-t md:border-t-0 md:border-l" style={{ borderColor: "rgba(226,221,213,0.15)" }}>
+              <p className="text-xs font-semibold tracking-[0.16em] uppercase mb-4" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#E08E45" }}>
+                Para trabajar
+              </p>
+              <div className="flex items-center gap-3 mb-3">
+                <Wifi size={18} style={{ color: "#E08E45" }} />
+                <span className="text-base tabular-nums" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#F7F4EF" }}>Wi-Fi 300 Mbps</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Zap size={16} style={{ color: "#B45309" }} />
-                <span className="text-sm" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#D6CFC7" }}>Barra con enchufes</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock size={16} style={{ color: "#B45309" }} />
-                <span className="text-sm" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#D6CFC7" }}>Abierto 7 días</span>
+              <div className="flex items-center gap-3">
+                <Zap size={18} style={{ color: "#E08E45" }} />
+                <span className="text-base" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#F7F4EF" }}>Barra con enchufes</span>
               </div>
             </div>
 
-            {/* Google Maps */}
-            <a
-              href="https://maps.google.com/?q=ORIGEN+Cafe+El+Salvador"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold transition-all duration-[160ms] active:scale-[0.97] min-h-[44px]"
-              style={{
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                backgroundColor: "#B45309",
-                color: "#F7F4EF",
-                transitionTimingFunction: "cubic-bezier(0.23,1,0.32,1)",
-              }}
-            >
-              <MapPin size={15} /> Ver en Google Maps
-            </a>
+            {/* Col 3 — Google Maps */}
+            <div className="p-6 md:p-8 border-t md:border-t-0 md:border-l flex flex-col justify-between gap-5" style={{ borderColor: "rgba(226,221,213,0.15)" }}>
+              <div>
+                <p className="text-xs font-semibold tracking-[0.16em] uppercase mb-4" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#E08E45" }}>
+                  Ubicación
+                </p>
+                <p className="text-base" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#D6CFC7" }}>
+                  Te esperamos todos los días.
+                </p>
+              </div>
+              <a
+                href="https://maps.google.com/?q=ORIGEN+Cafe+El+Salvador"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="self-start inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold active:scale-95 transition-transform duration-150 min-h-[44px]"
+                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", backgroundColor: "#B45309", color: "#F7F4EF" }}
+              >
+                <MapPin size={15} /> Ver en Google Maps
+              </a>
+            </div>
           </motion.div>
         </div>
 
@@ -915,7 +950,7 @@ function Espacio() {
           </span>
           <span className="text-xs" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "rgba(214,207,199,0.4)" }}>
             Sitio demo diseñado por{" "}
-            <a href="/" className="underline underline-offset-2 hover:opacity-70 transition-opacity">VORTEX</a>
+            <Link href="/" className="underline underline-offset-2 hover:opacity-70 transition-opacity">VORTEX</Link>
           </span>
         </div>
       </div>
