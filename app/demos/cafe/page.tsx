@@ -8,6 +8,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { CONTACT, whatsappLink, mailUrl } from "@/lib/contact";
 import {
   motion,
   useScroll,
@@ -26,6 +27,10 @@ import {
   ArrowRight,
   ShoppingBag,
   X,
+  ArrowUpRight,
+  Check,
+  Mail,
+  MessageCircle,
 } from "lucide-react";
 
 // ─── Rutas centralizadas de las 6 fotos ───────────────────────────────────────
@@ -142,6 +147,27 @@ function Navbar({ onCarta }: { onCarta: () => void }) {
         borderBottom: "1px solid #E2DDD5",
       }}
     >
+      {/* Cinta VORTEX — se pliega al hacer scroll */}
+      <div
+        className="overflow-hidden transition-[max-height] duration-300 ease-out"
+        style={{ maxHeight: scrolled ? 0 : 44, backgroundColor: "#B45309" }}
+      >
+        <div
+          className="max-w-[1120px] mx-auto px-5 h-11 flex items-center justify-center gap-2 text-[11px] md:text-xs"
+          style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#F7F4EF" }}
+        >
+          <span className="hidden sm:inline opacity-90">Demo diseñado por VORTEX Digital Solutions ·</span>
+          <span className="font-medium">¿Quieres una web así?</span>
+          <button
+            onClick={() => document.getElementById("vortex")?.scrollIntoView({ behavior: "smooth" })}
+            className="inline-flex items-center gap-1 min-h-[44px] font-semibold underline underline-offset-2 bg-transparent border-0 cursor-pointer"
+            style={{ color: "inherit" }}
+          >
+            Pídela con VORTEX <ArrowUpRight size={12} />
+          </button>
+        </div>
+      </div>
+
       <nav className="max-w-[1120px] mx-auto px-5 h-16 flex items-center justify-between">
         {/* Logo */}
         <span
@@ -255,7 +281,7 @@ function Hero({ onCarta }: { onCarta: () => void }) {
       style={{ minHeight: "100svh", backgroundColor: "#F7F4EF" }}
     >
       {/* Layout principal */}
-      <div className="relative max-w-[1120px] mx-auto px-5 min-h-[100svh] flex flex-col md:flex-row items-center pb-16 pt-28 gap-14 md:gap-16">
+      <div className="relative max-w-[1120px] mx-auto px-5 min-h-[100svh] flex flex-col md:flex-row items-center pb-16 pt-36 gap-14 md:gap-16">
 
         {/* Columna izq — Copy */}
         <div className="relative z-10 flex-1 flex flex-col justify-center">
@@ -837,7 +863,7 @@ function Espacio() {
         </div>
 
         {/* Fotos verticales 4:5 asimétricas + barra de datos en 3 columnas */}
-        <div ref={ref} className="mb-16">
+        <div ref={ref}>
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 mb-6 md:mb-8">
 
             {/* Foto salón — protagonista */}
@@ -943,19 +969,163 @@ function Espacio() {
             </div>
           </motion.div>
         </div>
-
-        {/* Footer */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-8" style={{ borderTop: "1px solid rgba(226,221,213,0.12)" }}>
-          <span className="text-sm" style={{ fontFamily: "'Newsreader', serif", fontStyle: "italic", color: "rgba(214,207,199,0.6)" }}>
-            ORIGEN — Café de Especialidad
-          </span>
-          <span className="text-xs" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "rgba(214,207,199,0.4)" }}>
-            Sitio demo diseñado por{" "}
-            <Link href="/" className="underline underline-offset-2 hover:opacity-70 transition-opacity">VORTEX</Link>
-          </span>
-        </div>
       </div>
     </section>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 6. PROMO VORTEX + FOOTER
+// ─────────────────────────────────────────────────────────────────────────────
+const WA_VORTEX = whatsappLink(
+  "Hola VORTEX, vi el demo de ORIGEN (cafetería) y quiero una página similar para mi negocio."
+);
+
+function VortexPromo() {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-60px" });
+
+  const incluye = [
+    "Diseño editorial con la identidad de tu marca",
+    "Pensada para abrirse desde Instagram, en el teléfono",
+    "Carta o catálogo con pedidos directo a tu WhatsApp",
+    "Animaciones suaves, ligeras y hechas para móvil",
+  ];
+
+  return (
+    <section
+      id="vortex"
+      className="py-20 md:py-28 overflow-x-clip"
+      style={{ backgroundColor: "#EFECE6", borderTop: "1px solid #E2DDD5" }}
+    >
+      <div ref={ref} className="max-w-[1120px] mx-auto px-5 grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16 items-center">
+
+        {/* Mensaje + CTAs */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.7, ease: EASE_EDITORIAL }}
+          className="md:col-span-7"
+        >
+          <p className="flex items-center gap-3 text-xs font-semibold tracking-[0.18em] uppercase mb-5" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#B45309" }}>
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full rounded-full animate-ping opacity-60" style={{ backgroundColor: "#B45309" }} />
+              <span className="relative inline-flex h-2 w-2 rounded-full" style={{ backgroundColor: "#B45309" }} />
+            </span>
+            Demo creado por VORTEX Digital Solutions
+          </p>
+
+          <h2 className="text-4xl md:text-6xl font-light leading-[1.1] mb-8" style={{ fontFamily: "'Newsreader', serif", color: "#1C1917" }}>
+            ¿Quieres una web{" "}
+            <em style={{ fontStyle: "italic", color: "#B45309" }}>así</em>
+            <br className="hidden md:block" /> para tu negocio?
+          </h2>
+
+          <p className="text-base md:text-lg leading-relaxed max-w-[520px] mb-8" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#57534E" }}>
+            ORIGEN es un demo. En VORTEX diseñamos páginas como esta para cafeterías, restaurantes,
+            tiendas y servicios en El Salvador: con tu marca, rápidas en el teléfono y con pedidos
+            directo a tu WhatsApp.
+          </p>
+
+          <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 mb-6">
+            <a
+              href={WA_VORTEX}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-full text-sm font-semibold active:scale-95 transition-transform duration-150 min-h-[44px]"
+              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", backgroundColor: "#B45309", color: "#F7F4EF" }}
+            >
+              Pídela con VORTEX <ArrowUpRight size={16} />
+            </a>
+            <a
+              href={mailUrl}
+              className="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-full text-sm font-semibold active:scale-95 transition-transform duration-150 min-h-[44px]"
+              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#1C1917", border: "1px solid #1C1917" }}
+            >
+              <Mail size={16} /> Escríbenos por correo
+            </a>
+          </div>
+
+          <nav aria-label="Más de VORTEX" className="flex flex-wrap items-center gap-x-6 gap-y-1" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            {[
+              { href: "/#demos", label: "Ver más demos" },
+              { href: "/#contacto", label: "Formulario de contacto" },
+              { href: "/", label: "Volver a VORTEX" },
+            ].map((l) => (
+              <Link
+                key={l.label}
+                href={l.href}
+                className="inline-flex items-center min-h-[44px] text-sm font-medium underline underline-offset-4 decoration-[#E2DDD5] hover:decoration-[#B45309] transition-colors"
+                style={{ color: "#1C1917" }}
+              >
+                {l.label}
+              </Link>
+            ))}
+          </nav>
+        </motion.div>
+
+        {/* Ficha VORTEX */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.15, duration: 0.7, ease: EASE_EDITORIAL }}
+          className="md:col-span-5 rounded-2xl p-6 md:p-8"
+          style={{ backgroundColor: "#F7F4EF", border: "1px solid #E2DDD5" }}
+        >
+          <p className="text-[11px] font-semibold tracking-[0.16em] uppercase mb-1" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#B45309" }}>
+            Una web como esta incluye
+          </p>
+          <h3 className="text-2xl font-light mb-6" style={{ fontFamily: "'Newsreader', serif", color: "#1C1917" }}>
+            VORTEX <em style={{ fontStyle: "italic", color: "inherit" }}>Digital Solutions</em>
+          </h3>
+
+          <ul className="list-none m-0 p-0 mb-6">
+            {incluye.map((t, i) => (
+              <li
+                key={t}
+                className="flex items-start gap-3 py-3"
+                style={{ borderTop: i === 0 ? "1px solid #E2DDD5" : "none", borderBottom: "1px solid #E2DDD5" }}
+              >
+                <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: "#B45309", color: "#F7F4EF" }}>
+                  <Check size={12} strokeWidth={3} />
+                </span>
+                <span className="text-sm leading-snug" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#1C1917" }}>{t}</span>
+              </li>
+            ))}
+          </ul>
+
+          <div className="space-y-1" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            <a href={WA_VORTEX} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 min-h-[44px] text-sm font-medium tabular-nums" style={{ color: "#1C1917" }}>
+              <MessageCircle size={16} style={{ color: "#B45309" }} /> {CONTACT.whatsappDisplay}
+            </a>
+            <a href={mailUrl} className="flex items-center gap-2 min-h-[44px] text-sm break-all" style={{ color: "#57534E" }}>
+              <Mail size={16} style={{ color: "#B45309" }} /> {CONTACT.email}
+            </a>
+            <p className="flex items-center gap-2 min-h-[28px] text-sm" style={{ color: "#57534E" }}>
+              <MapPin size={16} style={{ color: "#B45309" }} /> {CONTACT.location}
+            </p>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="py-6" style={{ backgroundColor: "#241C18", borderTop: "1px solid rgba(226,221,213,0.12)" }}>
+      <div className="max-w-[1120px] mx-auto px-5 flex flex-col sm:flex-row items-center justify-between gap-1 sm:gap-3 text-center sm:text-left">
+        <span className="text-sm" style={{ fontFamily: "'Newsreader', serif", fontStyle: "italic", color: "rgba(214,207,199,0.7)" }}>
+          ORIGEN — Café de Especialidad · Negocio ficticio
+        </span>
+        <span className="text-xs" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "rgba(214,207,199,0.7)" }}>
+          Sitio demo diseñado por{" "}
+          <Link href="/" className="inline-flex items-center min-h-[44px] underline underline-offset-2 hover:opacity-70 transition-opacity" style={{ color: "#E08E45" }}>VORTEX</Link>
+          {" · "}
+          <a href={WA_VORTEX} target="_blank" rel="noopener noreferrer" className="inline-flex items-center min-h-[44px] underline underline-offset-2 hover:opacity-70 transition-opacity">Contactar</a>
+        </span>
+      </div>
+    </footer>
   );
 }
 
@@ -1005,6 +1175,8 @@ export default function CafePage() {
         <Favoritos onAddToCart={handleAdd} />
         <Carta cart={cart} onAdd={handleAdd} onRemove={handleRemove} />
         <Espacio />
+        <VortexPromo />
+        <Footer />
         <CartDrawer cart={cart} onClear={handleClear} />
       </div>
     </>
