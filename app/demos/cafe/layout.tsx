@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "./cafe.css";
 
 export const metadata: Metadata = {
   title: "ORIGEN — Café de Especialidad | Demo VORTEX Digital Solutions",

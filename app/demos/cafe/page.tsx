@@ -40,18 +40,7 @@ const PHOTOS = {
 // bg: #F7F4EF  superficie: #EFECE6  typo-bg: #E6E0D6  bloque-final: #241C18
 // texto: #1C1917  secundario: #57534E  acento: #B45309  divisor: #E2DDD5
 
-// ─── Tipografía — Google Fonts via <style> ────────────────────────────────────
-const FontLink = () => (
-  <>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-    {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-    <link
-      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-  </>
-);
+// Fuentes cargadas via cafe.css → @import "tailwindcss" + Google Fonts
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 interface MenuItem {
@@ -132,16 +121,16 @@ function Navbar({ onCarta }: { onCarta: () => void }) {
     <header
       className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
       style={{
-        backgroundColor: scrolled ? "rgba(247,244,239,0.92)" : "transparent",
-        backdropFilter: scrolled ? "blur(12px)" : "none",
-        borderBottom: scrolled ? "1px solid #E2DDD5" : "none",
+        backgroundColor: scrolled ? "rgba(247,244,239,0.96)" : "rgba(247,244,239,0.85)",
+        backdropFilter: "blur(12px)",
+        borderBottom: "1px solid #E2DDD5",
       }}
     >
       <nav className="max-w-[1120px] mx-auto px-5 h-16 flex items-center justify-between">
         {/* Logo */}
         <span
           className="text-[22px] tracking-tight select-none"
-          style={{ fontFamily: "'Newsreader', serif", color: scrolled ? "#1C1917" : "#F7F4EF" }}
+          style={{ fontFamily: "'Newsreader', serif", color: "#1C1917" }}
         >
           ORIGEN.
         </span>
@@ -153,7 +142,7 @@ function Navbar({ onCarta }: { onCarta: () => void }) {
               <button
                 onClick={l.action}
                 className="text-sm font-medium transition-opacity duration-200 hover:opacity-70 bg-transparent border-0 cursor-pointer"
-                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: scrolled ? "#57534E" : "rgba(247,244,239,0.85)" }}
+                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#57534E" }}
               >
                 {l.label}
               </button>
@@ -182,9 +171,9 @@ function Navbar({ onCarta }: { onCarta: () => void }) {
           className="md:hidden p-2 min-h-[44px] min-w-[44px] flex flex-col justify-center items-center gap-1.5 bg-transparent border-0 cursor-pointer"
           aria-label="Menú"
         >
-          <span className="block w-5 h-0.5 transition-all duration-200" style={{ backgroundColor: scrolled ? "#1C1917" : "#F7F4EF", transform: menuOpen ? "rotate(45deg) translate(2px,2px)" : "none" }} />
-          <span className="block w-5 h-0.5 transition-all duration-200" style={{ backgroundColor: scrolled ? "#1C1917" : "#F7F4EF", opacity: menuOpen ? 0 : 1 }} />
-          <span className="block w-5 h-0.5 transition-all duration-200" style={{ backgroundColor: scrolled ? "#1C1917" : "#F7F4EF", transform: menuOpen ? "rotate(-45deg) translate(2px,-2px)" : "none" }} />
+          <span className="block w-5 h-0.5 transition-all duration-200" style={{ backgroundColor: "#1C1917", transform: menuOpen ? "rotate(45deg) translate(2px,2px)" : "none" }} />
+          <span className="block w-5 h-0.5 transition-all duration-200" style={{ backgroundColor: "#1C1917", opacity: menuOpen ? 0 : 1 }} />
+          <span className="block w-5 h-0.5 transition-all duration-200" style={{ backgroundColor: "#1C1917", transform: menuOpen ? "rotate(-45deg) translate(2px,-2px)" : "none" }} />
         </button>
       </nav>
 
@@ -244,9 +233,9 @@ function Hero({ onCarta }: { onCarta: () => void }) {
       ref={ref}
       id="hero"
       className="relative overflow-hidden"
-      style={{ minHeight: "100svh", backgroundColor: "#1C1917" }}
+      style={{ minHeight: "100svh", backgroundColor: "#F7F4EF" }}
     >
-      {/* Capa 1 — Texto gigante de fondo */}
+      {/* Capa 1 — Watermark gigante de fondo */}
       <motion.div
         style={{ y: yTitle, willChange: "transform" }}
         className="absolute inset-0 flex items-center justify-center select-none pointer-events-none"
@@ -255,21 +244,13 @@ function Hero({ onCarta }: { onCarta: () => void }) {
           className="text-[22vw] md:text-[18vw] font-light leading-none tracking-tighter"
           style={{
             fontFamily: "'Newsreader', serif",
-            color: "#2C2420",
+            color: "#E6E0D6",
             whiteSpace: "nowrap",
           }}
         >
           ORIGEN
         </span>
       </motion.div>
-
-      {/* Overlay gradiente */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: "linear-gradient(to bottom, rgba(28,25,23,0.3) 0%, rgba(28,25,23,0.1) 40%, rgba(28,25,23,0.6) 100%)",
-        }}
-      />
 
       {/* Layout principal */}
       <div className="relative z-10 max-w-[1120px] mx-auto px-5 min-h-[100svh] flex flex-col md:flex-row items-center md:items-end pb-16 pt-32 gap-8 md:gap-16">
@@ -291,7 +272,7 @@ function Hero({ onCarta }: { onCarta: () => void }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35, duration: 0.9, ease: EASE_EDITORIAL }}
             className="text-5xl md:text-6xl lg:text-7xl font-light leading-[1.05] mb-6"
-            style={{ fontFamily: "'Newsreader', serif", color: "#F7F4EF" }}
+            style={{ fontFamily: "'Newsreader', serif", color: "#1C1917" }}
           >
             Donde el{" "}
             <em style={{ fontStyle: "italic", color: "#F7F4EF" }}>grano</em>
@@ -304,7 +285,7 @@ function Hero({ onCarta }: { onCarta: () => void }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.7, ease: EASE_EDITORIAL }}
             className="text-base md:text-lg leading-relaxed mb-8 max-w-[480px]"
-            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "rgba(247,244,239,0.72)" }}
+            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#57534E" }}
           >
             Cada taza es el resultado de semanas de trabajo entre el productor y el tostador.
             Espresso de altura, V60, Cold Brew y panadería artesanal.
@@ -332,13 +313,13 @@ function Hero({ onCarta }: { onCarta: () => void }) {
 
             <div className="flex items-center gap-6">
               <div className="flex flex-col">
-                <span className="text-lg font-semibold tabular-nums" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#F7F4EF" }}>4.9 ★</span>
-                <span className="text-xs" style={{ color: "rgba(247,244,239,0.55)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>en Google</span>
+                <span className="text-lg font-semibold tabular-nums" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#1C1917" }}>4.9 ★</span>
+                <span className="text-xs" style={{ color: "#57534E", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>en Google</span>
               </div>
-              <div className="w-px h-8" style={{ backgroundColor: "rgba(247,244,239,0.2)" }} />
+              <div className="w-px h-8" style={{ backgroundColor: "#E2DDD5" }} />
               <div className="flex flex-col">
-                <span className="text-lg font-semibold" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#F7F4EF" }}>100%</span>
-                <span className="text-xs" style={{ color: "rgba(247,244,239,0.55)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Grano Altura</span>
+                <span className="text-lg font-semibold" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#1C1917" }}>100%</span>
+                <span className="text-xs" style={{ color: "#57534E", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Grano Altura</span>
               </div>
             </div>
           </motion.div>
@@ -974,7 +955,6 @@ export default function CafePage() {
 
   return (
     <>
-      <FontLink />
       <div
         className="overflow-x-clip"
         style={{
