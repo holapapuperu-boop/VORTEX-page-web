@@ -1,6 +1,6 @@
 // Imágenes y textos del demo. Para cambiar una foto: reemplaza el archivo en /public/demos/aforce/
-export const VORTEX_URL = "https://vortexdigitalsolutions.vercel.app";
-export const WHATSAPP = "https://wa.me/50300000000";
+export const VORTEX_URL = "https://vortex-negocio-web-app.vercel.app";
+export const WHATSAPP = "https://wa.me/50373831623";
 
 export const IMG = {
   hero: "/demos/aforce/hero-taillights.jpg",
