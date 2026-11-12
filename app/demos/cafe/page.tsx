@@ -244,7 +244,8 @@ function Hero({ onCarta }: { onCarta: () => void }) {
   const k = useParallaxStrength();
   const yTitle = useTransform(scrollYProgress, [0, 1], [0, 90 * k]);
   const yPhoto = useTransform(scrollYProgress, [0, 1], [0, -50 * k]);
-  const yCard  = useTransform(scrollYProgress, [0, 1], [0, -130 * k]);
+  // En móvil la ficha apenas se desplaza, para no subir sobre la bebida
+  const yCard  = useTransform(scrollYProgress, [0, 1], [0, -130 * k * (k < 1 ? 0.35 : 1)]);
 
   return (
     <section
@@ -327,7 +328,7 @@ function Hero({ onCarta }: { onCarta: () => void }) {
         </div>
 
         {/* Columna der — Composición fotográfica */}
-        <div className="relative z-10 w-full md:w-[380px] lg:w-[420px] flex-shrink-0">
+        <div className="relative z-10 w-full mb-24 md:mb-0 md:w-[380px] lg:w-[420px] flex-shrink-0">
 
           {/* Capa 1 — Watermark detrás de la foto: móvil asoma por arriba, desktop por los lados */}
           <div
@@ -366,7 +367,7 @@ function Hero({ onCarta }: { onCarta: () => void }) {
             initial={{ opacity: 0, x: -20, scale: 0.95 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
             transition={{ delay: 0.8, duration: 0.7, ease: EASE_EDITORIAL }}
-            className="absolute z-20 -left-3 md:-left-24 bottom-8 w-[15rem] md:w-56 rounded-xl p-4 backdrop-blur-md shadow-xl"
+            className="absolute z-20 -left-2 -bottom-24 md:-left-24 md:bottom-8 w-[15rem] md:w-56 rounded-xl p-4 backdrop-blur-md shadow-xl"
           >
             <div className="flex items-center gap-2 mb-3 pb-3" style={{ borderBottom: "1px solid #E2DDD5" }}>
               <span className="relative flex h-2 w-2">
