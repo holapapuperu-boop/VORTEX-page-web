@@ -987,7 +987,7 @@ function VortexPromo() {
 
   const incluye = [
     "Diseño editorial con la identidad de tu marca",
-    "Pensada para abrirse desde Instagram, en el teléfono",
+    "Optimizada para móvil y para cargarse rápido",
     "Carta o catálogo con pedidos directo a tu WhatsApp",
     "Animaciones suaves, ligeras y hechas para móvil",
   ];
