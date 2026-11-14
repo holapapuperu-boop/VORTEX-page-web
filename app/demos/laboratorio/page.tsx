@@ -12,16 +12,74 @@ import {
   Phone,
   FileText,
   Search,
-  Microscope,
-  Droplets,
   Thermometer,
   Activity,
-  Users,
   Shield,
   Home,
   X,
+  ExternalLink,
+  Sparkles,
 } from "lucide-react";
 import Link from "next/link";
+
+// ─────────────────────────────────────────────
+// MODAL DEMO — aparece en lugar de abrir WhatsApp
+// en acciones que serían reales (agendar, cotizar,
+// enviar orden, solicitar domicilio)
+// ─────────────────────────────────────────────
+function ModalDemo({ onClose }: { onClose: () => void }) {
+  return (
+    <div
+      className="fixed inset-0 z-[200] flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+      <div
+        className="relative bg-white rounded-2xl shadow-xl border border-slate-200 max-w-sm w-full p-7 space-y-4"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between">
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold tracking-widest text-teal-600 uppercase">
+            <Sparkles size={12} strokeWidth={2} />
+            Sitio demostrativo
+          </span>
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition-colors cursor-pointer">
+            <X size={18} strokeWidth={1.75} />
+          </button>
+        </div>
+        <h3 className="font-jakarta text-lg font-bold text-[#0F172A] leading-tight">
+          Esta es una demo de VORTEX Digital Solutions
+        </h3>
+        <p className="text-sm text-slate-500 leading-relaxed">
+          VERITAS LAB es un cliente ficticio creado para mostrar las capacidades de diseño y desarrollo web de VORTEX. Esta acción abriría WhatsApp en un sitio real.
+        </p>
+        <div className="pt-1 flex flex-col gap-2">
+          <a
+            href="/"
+            className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#114232] text-white text-sm font-semibold rounded-xl hover:bg-[#0d3326] transition-all"
+          >
+            Ver portafolio VORTEX
+            <ExternalLink size={14} strokeWidth={1.75} />
+          </a>
+          <button
+            onClick={onClose}
+            className="w-full py-2.5 text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors cursor-pointer"
+          >
+            Seguir explorando la demo
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Hook para manejar el modal desde cualquier botón
+function useDemoModal() {
+  const [open, setOpen] = useState(false);
+  const show = (e: React.MouseEvent) => { e.preventDefault(); setOpen(true); };
+  const modal = open ? <ModalDemo onClose={() => setOpen(false)} /> : null;
+  return { show, modal };
+}
 
 // ─────────────────────────────────────────────
 // DATA — preparado para escalar a Supabase
@@ -249,6 +307,7 @@ function CategoriaBadge({ cat }: { cat: Categoria }) {
 function Cotizador() {
   const QUICK_EXAMS = EXAMENES.slice(0, 6);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const { show, modal } = useDemoModal();
 
   const toggle = (id: string) => {
     setSelected((prev) => {
@@ -267,13 +326,6 @@ function Cotizador() {
       : maxAyuno <= 8
       ? `Requiere ${maxAyuno}h de ayuno`
       : `Requiere 8–12h de ayuno`;
-
-  const waMessage =
-    selectedExams.length > 0
-      ? `Hola VERITAS LAB, deseo agendar los siguientes exámenes:\n${selectedExams
-          .map((e) => `• ${e.nombre} ($${e.precio}.00)`)
-          .join("\n")}\nTotal estimado: $${total}.00`
-      : "";
 
   return (
     <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 h-full flex flex-col gap-5">
@@ -347,19 +399,19 @@ function Cotizador() {
           )}
         </div>
 
-        <a
-          href={selectedExams.length > 0 ? buildWALink(waMessage) : "#"}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl text-sm font-semibold transition-all duration-200 ${
-            selectedExams.length > 0
-              ? "bg-[#114232] text-white hover:bg-[#0d3326] shadow-sm hover:shadow-md active:scale-[0.98]"
-              : "bg-slate-100 text-slate-400 cursor-not-allowed"
-          }`}
-        >
-          <MessageCircle size={16} strokeWidth={1.75} />
-          Agendar selección por WhatsApp
-        </a>
+        {selectedExams.length === 0 ? (
+          <div className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl text-sm font-medium bg-slate-100 text-slate-400 border border-slate-200">
+            Selecciona al menos un examen
+          </div>
+        ) : (
+          <button
+            onClick={show}
+            className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl text-sm font-semibold bg-[#114232] text-white hover:bg-[#0d3326] shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-200 cursor-pointer"
+          >
+            <MessageCircle size={16} strokeWidth={1.75} />
+            Agendar selección por WhatsApp
+          </button>
+        )}
       </div>
     </div>
   );
@@ -372,6 +424,7 @@ function Cotizador() {
 function CatalogoExamenes() {
   const [query, setQuery] = useState("");
   const [catFilter, setCatFilter] = useState<"Todos" | Categoria>("Todos");
+  const { show, modal } = useDemoModal();
 
   const categorias: Array<"Todos" | Categoria> = [
     "Todos",
@@ -390,9 +443,6 @@ function CatalogoExamenes() {
       }),
     [query, catFilter]
   );
-
-  const waMsg = (e: Examen) =>
-    `Hola VERITAS LAB, me gustaría cotizar:\n• ${e.nombre} ($${e.precio}.00)`;
 
   return (
     <div>
@@ -429,6 +479,7 @@ function CatalogoExamenes() {
         </div>
       </div>
 
+      {modal}
       {/* Lista editorial */}
       <div className="divide-y divide-slate-200 border border-slate-200 rounded-2xl overflow-hidden bg-white">
         {filtered.length === 0 && (
@@ -463,14 +514,12 @@ function CatalogoExamenes() {
               <span className="text-base font-bold text-[#114232] tabular-nums">
                 ${ex.precio.toFixed(2)}
               </span>
-              <a
-                href={buildWALink(waMsg(ex))}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-[#F0FDFA] text-teal-700 border border-teal-200 hover:bg-teal-600 hover:text-white hover:border-teal-600 transition-all"
+              <button
+                onClick={show}
+                className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-[#F0FDFA] text-teal-700 border border-teal-200 hover:bg-teal-600 hover:text-white hover:border-teal-600 transition-all cursor-pointer"
               >
                 Cotizar
-              </a>
+              </button>
             </div>
           </div>
         ))}
@@ -490,6 +539,7 @@ function FormularioDomicilio() {
     examen: "",
     horario: "",
   });
+  const { show, modal } = useDemoModal();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -497,12 +547,12 @@ function FormularioDomicilio() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const msg = `Hola VERITAS LAB, quisiera solicitar toma de muestra a domicilio:\n\n• Paciente: ${form.nombre}\n• Zona/Colonia: ${form.zona}\n• Examen o perfil: ${form.examen}\n• Horario preferido: ${form.horario}\n\nPor favor confirmar disponibilidad. Gracias.`;
-    window.open(buildWALink(msg), "_blank");
+    show(e as unknown as React.MouseEvent);
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {modal}
       <div>
         <label className="block text-xs font-semibold text-slate-500 mb-1.5 tracking-wide uppercase">
           Nombre del paciente
@@ -641,12 +691,15 @@ function Acordeon() {
 
 export default function LaboratorioPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { show: showDemo, modal: demoModal } = useDemoModal();
 
   return (
     <div
       className="min-h-screen bg-[#F9FAF9]"
       style={{ fontFamily: "'DM Sans', 'Geist', system-ui, sans-serif" }}
     >
+      {demoModal}
+
       {/* ══════════════════════════════════════════════
           BARRA VORTEX
       ══════════════════════════════════════════════ */}
@@ -704,17 +757,13 @@ export default function LaboratorioPage() {
           </nav>
 
           {/* CTA */}
-          <a
-            href={buildWALink(
-              "Hola VERITAS LAB, deseo enviar una orden médica para cotización."
-            )}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden md:flex items-center gap-2 bg-[#114232] text-white text-xs font-semibold px-4 py-2.5 rounded-xl hover:bg-[#0d3326] transition-all duration-200 shadow-sm hover:shadow-md active:scale-[0.98] shrink-0"
+          <button
+            onClick={showDemo}
+            className="hidden md:flex items-center gap-2 bg-[#114232] text-white text-xs font-semibold px-4 py-2.5 rounded-xl hover:bg-[#0d3326] transition-all duration-200 shadow-sm hover:shadow-md active:scale-[0.98] shrink-0 cursor-pointer whitespace-nowrap"
           >
             <MessageCircle size={14} strokeWidth={1.75} />
             Enviar orden por WhatsApp
-          </a>
+          </button>
 
           {/* Mobile toggle */}
           <button
@@ -752,17 +801,13 @@ export default function LaboratorioPage() {
                 {s.charAt(0).toUpperCase() + s.slice(1)}
               </a>
             ))}
-            <a
-              href={buildWALink(
-                "Hola VERITAS LAB, deseo enviar una orden médica."
-              )}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 bg-[#114232] text-white text-sm font-semibold px-4 py-3 rounded-xl justify-center mt-2"
+            <button
+              onClick={showDemo}
+              className="flex items-center gap-2 bg-[#114232] text-white text-sm font-semibold px-4 py-3 rounded-xl justify-center mt-2 w-full cursor-pointer"
             >
               <MessageCircle size={15} strokeWidth={1.75} />
               Enviar orden por WhatsApp
-            </a>
+            </button>
           </div>
         )}
       </header>
@@ -824,17 +869,13 @@ export default function LaboratorioPage() {
 
             {/* CTAs */}
             <div className="flex flex-wrap gap-3">
-              <a
-                href={buildWALink(
-                  "Hola VERITAS LAB, me gustaría agendar un examen. ¿Podrían orientarme?"
-                )}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 bg-[#114232] text-white text-sm font-semibold px-5 py-3 rounded-xl hover:bg-[#0d3326] transition-all shadow-sm hover:shadow-md active:scale-[0.98]"
+              <button
+                onClick={showDemo}
+                className="flex items-center gap-2 bg-[#114232] text-white text-sm font-semibold px-5 py-3 rounded-xl hover:bg-[#0d3326] transition-all shadow-sm hover:shadow-md active:scale-[0.98] cursor-pointer"
               >
                 <MessageCircle size={16} strokeWidth={1.75} />
                 Agendar por WhatsApp
-              </a>
+              </button>
               <a
                 href="#examenes"
                 className="flex items-center gap-2 border border-slate-200 text-slate-600 text-sm font-semibold px-5 py-3 rounded-xl hover:border-teal-500 hover:text-teal-700 transition-all bg-white"
@@ -952,17 +993,13 @@ export default function LaboratorioPage() {
                     salir de tu casa.
                   </p>
                 </div>
-                <a
-                  href={buildWALink(
-                    "Hola VERITAS LAB, adjunto mi orden médica para cotización:"
-                  )}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-sm font-semibold text-teal-700 hover:text-teal-800 transition-colors"
+                <button
+                  onClick={showDemo}
+                  className="flex items-center gap-2 text-sm font-semibold text-teal-700 hover:text-teal-800 transition-colors cursor-pointer"
                 >
                   Enviar receta por WhatsApp
                   <ArrowRight size={14} strokeWidth={2} />
-                </a>
+                </button>
               </div>
             </div>
           </div>
@@ -1042,17 +1079,13 @@ export default function LaboratorioPage() {
                     Requiere ayuno de {PERFILES[0].ayuno} horas
                   </p>
                 </div>
-                <a
-                  href={buildWALink(
-                    `Hola VERITAS LAB, deseo reservar el perfil "${PERFILES[0].nombre}" por $${PERFILES[0].precio.toFixed(2)}.`
-                  )}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full py-3 bg-[#114232] text-white text-sm font-semibold rounded-xl hover:bg-[#0d3326] transition-all shadow-sm hover:shadow-md active:scale-[0.98]"
+                <button
+                  onClick={showDemo}
+                  className="flex items-center justify-center gap-2 w-full py-3 bg-[#114232] text-white text-sm font-semibold rounded-xl hover:bg-[#0d3326] transition-all shadow-sm hover:shadow-md active:scale-[0.98] cursor-pointer"
                 >
                   <MessageCircle size={15} strokeWidth={1.75} />
                   Reservar por WhatsApp
-                </a>
+                </button>
               </div>
             </div>
 
@@ -1073,17 +1106,13 @@ export default function LaboratorioPage() {
                   </p>
                   <div className="flex items-center justify-between gap-4 flex-wrap">
                     <AyunoBadge horas={p.ayuno} />
-                    <a
-                      href={buildWALink(
-                        `Hola VERITAS LAB, deseo agendar el perfil "${p.nombre}" por $${p.precio.toFixed(2)}.`
-                      )}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs font-semibold text-teal-700 hover:text-teal-800 flex items-center gap-1 transition-colors"
+                    <button
+                      onClick={showDemo}
+                      className="text-xs font-semibold text-teal-700 hover:text-teal-800 flex items-center gap-1 transition-colors cursor-pointer"
                     >
                       Agendar
                       <ArrowRight size={12} strokeWidth={2} />
-                    </a>
+                    </button>
                   </div>
                 </div>
               ))}
@@ -1271,14 +1300,12 @@ export default function LaboratorioPage() {
                     <p className="text-sm font-semibold text-[#0F172A]">
                       WhatsApp
                     </p>
-                    <a
-                      href={buildWALink("Hola VERITAS LAB, tengo una consulta.")}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm text-teal-600 hover:text-teal-700 mt-0.5 block transition-colors"
+                    <button
+                      onClick={showDemo}
+                      className="text-sm text-teal-600 hover:text-teal-700 mt-0.5 block transition-colors cursor-pointer text-left"
                     >
                       +503 7383-1623
-                    </a>
+                    </button>
                   </div>
                 </div>
 
@@ -1305,47 +1332,96 @@ export default function LaboratorioPage() {
       </section>
 
       {/* ══════════════════════════════════════════════
+          VORTEX CTA SECTION
+      ══════════════════════════════════════════════ */}
+      <section className="bg-[#0F172A] px-6 py-16">
+        <div className="max-w-6xl mx-auto">
+          {/* Badge demo */}
+          <div className="flex justify-center mb-8">
+            <span className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-xs font-semibold text-white/70 tracking-widest uppercase">
+              <Sparkles size={11} strokeWidth={2} />
+              Sitio demostrativo · No es un negocio real
+            </span>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Izquierda */}
+            <div>
+              <p className="text-xs font-semibold tracking-widest text-teal-400 uppercase mb-3">
+                VORTEX Digital Solutions
+              </p>
+              <h2 className="font-jakarta text-3xl lg:text-4xl font-bold text-white leading-tight tracking-tight mb-4">
+                ¿Quieres un sitio así para tu negocio?
+              </h2>
+              <p className="text-slate-400 text-base leading-relaxed mb-8">
+                Diseñamos y desarrollamos páginas web profesionales para negocios en El Salvador. Esta demo es una muestra de lo que podemos construir para ti.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <Link
+                  href="/"
+                  className="flex items-center gap-2 bg-teal-500 hover:bg-teal-400 text-white text-sm font-semibold px-5 py-3 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-[0.98]"
+                >
+                  Ver portafolio VORTEX
+                  <ArrowRight size={15} strokeWidth={2} />
+                </Link>
+                <Link
+                  href="/#demos"
+                  className="flex items-center gap-2 border border-white/20 text-white/80 hover:text-white hover:border-white/40 text-sm font-semibold px-5 py-3 rounded-xl transition-all bg-white/5"
+                >
+                  Ver otras demos
+                </Link>
+              </div>
+            </div>
+
+            {/* Derecha — tarjetas de lo que ofrecen */}
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { icon: "🌐", titulo: "Páginas web", desc: "Para negocios, servicios y portafolios" },
+                { icon: "🛒", titulo: "Tiendas online", desc: "Catálogo, carrito y pagos integrados" },
+                { icon: "⚡", titulo: "Apps a medida", desc: "Software personalizado para tu operación" },
+                { icon: "📊", titulo: "Sector Salud", desc: "Demos y sitios para clínicas y laboratorios" },
+              ].map((item) => (
+                <div key={item.titulo} className="bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/10 transition-colors">
+                  <span className="text-2xl mb-2 block">{item.icon}</span>
+                  <p className="text-sm font-semibold text-white mb-1">{item.titulo}</p>
+                  <p className="text-xs text-slate-400 leading-tight">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════
           FOOTER
       ══════════════════════════════════════════════ */}
-      <footer className="border-t border-slate-200 bg-[#F9FAF9] py-10 px-6">
+      <footer className="border-t border-white/10 bg-[#0F172A] py-6 px-6">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
             <div className="w-7 h-7 bg-[#114232] rounded-lg flex items-center justify-center">
               <FlaskConical size={13} strokeWidth={1.75} className="text-white" />
             </div>
             <div className="font-jakarta">
-              <span className="text-sm font-bold text-[#114232]">VERITAS</span>
-              <span className="text-sm font-medium text-slate-400 ml-1">
-                LAB
-              </span>
-              <span className="text-xs text-slate-400 ml-2">
-                · Diagnóstico Clínico
-              </span>
+              <span className="text-sm font-bold text-white/60">VERITAS</span>
+              <span className="text-sm font-medium text-white/40 ml-1">LAB</span>
+              <span className="text-xs text-white/30 ml-2">· Demo</span>
             </div>
           </div>
 
-          <p className="text-xs text-slate-400 text-center">
-            Demo creada por{" "}
-            <Link
-              href="/"
-              className="font-semibold text-slate-600 hover:text-[#114232] transition-colors"
-            >
+          <p className="text-xs text-white/40 text-center">
+            Creado por{" "}
+            <Link href="/" className="font-semibold text-white/60 hover:text-white transition-colors">
               VORTEX Digital Solutions
-            </Link>{" "}
-            · Muestra sin valor comercial
+            </Link>
+            {" "}· El Salvador · ©{new Date().getFullYear()}
           </p>
 
-          <div className="flex items-center gap-5 text-xs text-slate-400">
-            <a
-              href={buildWALink("Hola, me interesa un sitio web para mi laboratorio.")}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-teal-600 transition-colors"
-            >
-              Quiero un sitio así
-            </a>
-            <span>©{new Date().getFullYear()}</span>
-          </div>
+          <Link
+            href="/"
+            className="text-xs font-semibold text-teal-400 hover:text-teal-300 transition-colors"
+          >
+            vortex.com.sv →
+          </Link>
         </div>
       </footer>
     </div>
