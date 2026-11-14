@@ -266,24 +266,35 @@ export default function Home() {
               </article>
             </Reveal>
 
-            {/* Demo 3 — Próximamente */}
+            {/* Demo 3 — VERITAS LAB (disponible) */}
             <Reveal delay={0.2}>
               <article className="demo-card">
-                <div className="demo-thumb" style={{ background: "linear-gradient(135deg,#0a0a0a,#1a1210)" }}>
-                  <svg viewBox="0 0 400 200" width="200" height="100" aria-hidden>
-                    <rect x="140" y="60" width="120" height="80" rx="4" fill="none" stroke="rgba(196,164,74,.2)" strokeWidth="1.5"/>
-                    <rect x="155" y="75" width="90" height="12" rx="2" fill="rgba(196,164,74,.08)" stroke="rgba(196,164,74,.2)" strokeWidth="1"/>
-                    <rect x="155" y="95" width="70" height="8" rx="2" fill="rgba(196,164,74,.05)"/>
-                    <rect x="155" y="108" width="80" height="8" rx="2" fill="rgba(196,164,74,.05)"/>
-                    <rect x="155" y="121" width="50" height="8" rx="2" fill="rgba(196,164,74,.05)"/>
+                <div className="demo-thumb">
+                  {/* Mini preview del hero de VERITAS LAB */}
+                  <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" width="260" height="130" aria-hidden>
+                    <rect width="400" height="200" fill="#040E1A"/>
+                    {/* Grid de fondo */}
+                    {[0,1,2,3,4,5,6,7,8].map(i=><line key={`v${i}`} x1={i*50} y1="0" x2={i*50} y2="200" stroke="rgba(56,189,248,.06)" strokeWidth="1"/>)}
+                    {[0,1,2,3,4].map(i=><line key={`h${i}`} x1="0" y1={i*50} x2="400" y2={i*50} stroke="rgba(56,189,248,.06)" strokeWidth="1"/>)}
+                    {/* Tubo de ensayo estilizado */}
+                    <rect x="185" y="40" width="30" height="80" rx="15" fill="none" stroke="rgba(56,189,248,.5)" strokeWidth="1.5"/>
+                    <rect x="188" y="90" width="24" height="30" rx="12" fill="rgba(56,189,248,.15)"/>
+                    <ellipse cx="200" cy="40" rx="15" ry="4" fill="rgba(56,189,248,.2)" stroke="rgba(56,189,248,.4)" strokeWidth="1"/>
+                    {/* Círculo exterior */}
+                    <circle cx="200" cy="100" r="55" fill="none" stroke="rgba(56,189,248,.12)" strokeWidth="1" strokeDasharray="4 3"/>
+                    {/* Texto */}
+                    <text x="200" y="158" textAnchor="middle" fill="rgba(56,189,248,.8)" fontSize="10" fontFamily="Arial,sans-serif" letterSpacing="5" fontWeight="700">VERITAS LAB</text>
+                    <text x="200" y="172" textAnchor="middle" fill="rgba(56,189,248,.35)" fontSize="7" fontFamily="Arial,sans-serif" letterSpacing="3">LABORATORIO CLÍNICO</text>
                   </svg>
                 </div>
                 <div className="demo-body">
-                  <p className="demo-industry">Hotel · Hospedaje</p>
-                  <div className="demo-coming">
-                    <Clock />
-                    <span>Próximamente</span>
-                  </div>
+                  <p className="demo-industry">Laboratorio · Salud</p>
+                  <span className="demo-badge">Demo disponible</span>
+                  <h3>VERITAS LAB</h3>
+                  <p>Landing para laboratorio clínico. Diseño oscuro y profesional, servicios de análisis, proceso de cita y sección de resultados en línea.</p>
+                  <Link href="/demos/laboratorio" className="demo-cta">
+                    Ver demo <ExternalLink />
+                  </Link>
                 </div>
               </article>
             </Reveal>
