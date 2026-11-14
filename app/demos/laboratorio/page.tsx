@@ -647,13 +647,6 @@ export default function LaboratorioPage() {
       className="min-h-screen bg-[#F9FAF9]"
       style={{ fontFamily: "'DM Sans', 'Geist', system-ui, sans-serif" }}
     >
-      {/* ── Google Fonts ── */}
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
-        .font-jakarta { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
-        .font-dm { font-family: 'DM Sans', system-ui, sans-serif; }
-      `}</style>
-
       {/* ══════════════════════════════════════════════
           BARRA VORTEX
       ══════════════════════════════════════════════ */}
