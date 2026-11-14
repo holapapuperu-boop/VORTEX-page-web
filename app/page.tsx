@@ -230,23 +230,38 @@ export default function Home() {
               </article>
             </Reveal>
 
-            {/* Demo 2 — Próximamente */}
+            {/* Demo 2 — ORIGEN (disponible) */}
             <Reveal delay={0.1}>
               <article className="demo-card">
-                <div className="demo-thumb" style={{ background: "linear-gradient(135deg,#0d1117,#1a1a2e)" }}>
-                  <svg viewBox="0 0 400 200" width="200" height="100" aria-hidden>
-                    <circle cx="200" cy="100" r="60" fill="none" stroke="rgba(37,99,235,.2)" strokeWidth="1.5"/>
-                    <circle cx="200" cy="100" r="40" fill="rgba(37,99,235,.04)" stroke="rgba(37,99,235,.15)" strokeWidth="1"/>
-                    <circle cx="200" cy="100" r="12" fill="rgba(37,99,235,.1)" stroke="rgba(37,99,235,.3)" strokeWidth="1"/>
-                    {[0,1,2,3,4,5].map(i=>{const a=i*60*Math.PI/180;return<line key={i} x1={200+12*Math.cos(a)} y1={100+12*Math.sin(a)} x2={200+40*Math.cos(a)} y2={100+40*Math.sin(a)} stroke="rgba(37,99,235,.2)" strokeWidth="1"/>;})}
+                <div className="demo-thumb">
+                  {/* Mini preview del hero de ORIGEN */}
+                  <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" width="260" height="130" aria-hidden>
+                    <rect width="400" height="200" fill="#F7F4EF"/>
+                    {/* Watermark gigante */}
+                    <text x="200" y="140" textAnchor="middle" fill="#E6E0D6" fontSize="118" fontFamily="Georgia,serif" fontWeight="700" letterSpacing="-4">ORIGEN</text>
+                    {/* Copa de café estilizada */}
+                    <ellipse cx="260" cy="80" rx="30" ry="38" fill="#C4916A" opacity=".85"/>
+                    <ellipse cx="260" cy="58" rx="22" ry="8" fill="#8B5E3C" opacity=".7"/>
+                    <ellipse cx="260" cy="58" rx="16" ry="5" fill="#6B3F20" opacity=".5"/>
+                    {/* Vapor */}
+                    <path d="M250 50 Q252 40 250 32" fill="none" stroke="#D6CFC7" strokeWidth="1.5" strokeLinecap="round" opacity=".6"/>
+                    <path d="M260 48 Q262 36 260 28" fill="none" stroke="#D6CFC7" strokeWidth="1.5" strokeLinecap="round" opacity=".6"/>
+                    <path d="M270 50 Q272 40 270 32" fill="none" stroke="#D6CFC7" strokeWidth="1.5" strokeLinecap="round" opacity=".6"/>
+                    {/* Texto editorial */}
+                    <text x="90" y="75" fill="#1C1917" fontSize="11" fontFamily="Georgia,serif" letterSpacing="3">CAFÉ DE</text>
+                    <text x="90" y="92" fill="#1C1917" fontSize="11" fontFamily="Georgia,serif" letterSpacing="3">ESPECIALIDAD</text>
+                    <line x1="90" y1="100" x2="180" y2="100" stroke="#E2DDD5" strokeWidth="1"/>
+                    <text x="90" y="115" fill="#B45309" fontSize="8" fontFamily="Arial,sans-serif" letterSpacing="2">TUESTE · ORIGEN · SABOR</text>
                   </svg>
                 </div>
                 <div className="demo-body">
-                  <p className="demo-industry">Restaurante · Gastronomía</p>
-                  <div className="demo-coming">
-                    <Clock />
-                    <span>Próximamente</span>
-                  </div>
+                  <p className="demo-industry">Cafetería · Especialidad</p>
+                  <span className="demo-badge">Demo disponible</span>
+                  <h3>ORIGEN</h3>
+                  <p>Landing editorial para cafetería de especialidad. Estética cálida, carta interactiva con carrito WhatsApp, ficha de tueste y espacio de trabajo.</p>
+                  <Link href="/demos/cafe" className="demo-cta">
+                    Ver demo <ExternalLink />
+                  </Link>
                 </div>
               </article>
             </Reveal>
