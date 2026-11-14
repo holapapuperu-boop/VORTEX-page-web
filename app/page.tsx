@@ -205,17 +205,23 @@ export default function Home() {
             <Reveal>
               <article className="demo-card">
                 <div className="demo-thumb">
-                  {/* Mini preview del hero de A-FORCE */}
+                  {/* Thumbnail A-FORCE — identidad tipográfica real */}
                   <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" width="260" height="130" aria-hidden>
                     <rect width="400" height="200" fill="#0A0A0A"/>
-                    <path d="M 42 145 Q 55 110 90 92 Q 145 72 200 70 Q 240 68 265 70 L 335 78 Q 390 90 410 108 L 428 140 Q 435 158 420 164 L 42 164 Q 28 158 42 145Z" fill="none" stroke="rgba(196,164,74,.35)" strokeWidth="1.5"/>
-                    <path d="M 115 92 Q 150 55 215 46 L 300 46 Q 345 48 368 78 L 115 92Z" fill="rgba(196,164,74,.06)" stroke="rgba(196,164,74,.22)" strokeWidth="1.2"/>
-                    <circle cx="118" cy="164" r="20" fill="none" stroke="rgba(196,164,74,.35)" strokeWidth="1.5"/>
-                    <circle cx="118" cy="164" r="10" fill="rgba(196,164,74,.1)" stroke="rgba(196,164,74,.4)" strokeWidth="1.2"/>
-                    <circle cx="316" cy="164" r="20" fill="none" stroke="rgba(196,164,74,.35)" strokeWidth="1.5"/>
-                    <circle cx="316" cy="164" r="10" fill="rgba(196,164,74,.1)" stroke="rgba(196,164,74,.4)" strokeWidth="1.2"/>
-                    <text x="200" y="30" textAnchor="middle" fill="rgba(196,164,74,.7)" fontSize="11" fontFamily="Georgia,serif" letterSpacing="4" fontWeight="600">A-FORCE</text>
-                    <text x="200" y="186" textAnchor="middle" fill="rgba(196,164,74,.3)" fontSize="7" fontFamily="Arial,sans-serif" letterSpacing="3">REFUSE ORDINARY</text>
+                    {/* Línea horizontal de acento, igual que la del navbar */}
+                    <line x1="0" y1="100" x2="400" y2="100" stroke="rgba(185,28,28,.12)" strokeWidth="40"/>
+                    {/* Ruido de textura sutil */}
+                    <rect width="400" height="200" fill="url(#noise-af)" opacity=".04"/>
+                    {/* Tagline superior */}
+                    <text x="200" y="58" textAnchor="middle" fill="rgba(255,255,255,.18)" fontSize="7" fontFamily="Arial,sans-serif" letterSpacing="6" fontWeight="400">HIGH-END · DETAILING · MODIFICACIONES</text>
+                    {/* Logo principal — replica exacta del navbar */}
+                    <text x="140" y="115" textAnchor="middle" fill="rgba(255,255,255,.92)" fontSize="28" fontFamily="Georgia,serif" letterSpacing="2" fontWeight="300">A</text>
+                    <line x1="162" y1="109" x2="186" y2="109" stroke="#B91C1C" strokeWidth="2.5"/>
+                    <text x="260" y="115" textAnchor="middle" fill="rgba(255,255,255,.92)" fontSize="28" fontFamily="Georgia,serif" letterSpacing="3" fontWeight="600">FORCE</text>
+                    {/* Tagline inferior */}
+                    <text x="200" y="152" textAnchor="middle" fill="rgba(255,255,255,.2)" fontSize="6.5" fontFamily="Arial,sans-serif" letterSpacing="5">REFUSE ORDINARY</text>
+                    {/* Línea decorativa bottom */}
+                    <line x1="160" y1="162" x2="240" y2="162" stroke="rgba(185,28,28,.5)" strokeWidth="1"/>
                   </svg>
                 </div>
                 <div className="demo-body">
@@ -234,24 +240,20 @@ export default function Home() {
             <Reveal delay={0.1}>
               <article className="demo-card">
                 <div className="demo-thumb">
-                  {/* Mini preview del hero de ORIGEN */}
+                  {/* Thumbnail ORIGEN — identidad tipográfica real */}
                   <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" width="260" height="130" aria-hidden>
-                    <rect width="400" height="200" fill="#F7F4EF"/>
-                    {/* Watermark gigante */}
-                    <text x="200" y="140" textAnchor="middle" fill="#E6E0D6" fontSize="118" fontFamily="Georgia,serif" fontWeight="700" letterSpacing="-4">ORIGEN</text>
-                    {/* Copa de café estilizada */}
-                    <ellipse cx="260" cy="80" rx="30" ry="38" fill="#C4916A" opacity=".85"/>
-                    <ellipse cx="260" cy="58" rx="22" ry="8" fill="#8B5E3C" opacity=".7"/>
-                    <ellipse cx="260" cy="58" rx="16" ry="5" fill="#6B3F20" opacity=".5"/>
-                    {/* Vapor */}
-                    <path d="M250 50 Q252 40 250 32" fill="none" stroke="#D6CFC7" strokeWidth="1.5" strokeLinecap="round" opacity=".6"/>
-                    <path d="M260 48 Q262 36 260 28" fill="none" stroke="#D6CFC7" strokeWidth="1.5" strokeLinecap="round" opacity=".6"/>
-                    <path d="M270 50 Q272 40 270 32" fill="none" stroke="#D6CFC7" strokeWidth="1.5" strokeLinecap="round" opacity=".6"/>
-                    {/* Texto editorial */}
-                    <text x="90" y="75" fill="#1C1917" fontSize="11" fontFamily="Georgia,serif" letterSpacing="3">CAFÉ DE</text>
-                    <text x="90" y="92" fill="#1C1917" fontSize="11" fontFamily="Georgia,serif" letterSpacing="3">ESPECIALIDAD</text>
-                    <line x1="90" y1="100" x2="180" y2="100" stroke="#E2DDD5" strokeWidth="1"/>
-                    <text x="90" y="115" fill="#B45309" fontSize="8" fontFamily="Arial,sans-serif" letterSpacing="2">TUESTE · ORIGEN · SABOR</text>
+                    <rect width="400" height="200" fill="#F7F3EE"/>
+                    {/* Watermark de fondo — igual que en la demo real */}
+                    <text x="200" y="152" textAnchor="middle" fill="#EDE8E0" fontSize="110" fontFamily="Georgia,serif" fontWeight="700" letterSpacing="-4">ORIGEN</text>
+                    {/* Logo — replica del navbar: Newsreader, tracking-tight */}
+                    <text x="200" y="98" textAnchor="middle" fill="#1C1917" fontSize="30" fontFamily="Georgia,serif" letterSpacing="-0.5" fontWeight="300">ORIGEN.</text>
+                    {/* Punto de acento naranja */}
+                    <circle cx="200" cy="118" r="2.5" fill="#B45309"/>
+                    {/* Tagline */}
+                    <text x="200" y="140" textAnchor="middle" fill="#A8926A" fontSize="7" fontFamily="Arial,sans-serif" letterSpacing="4" fontWeight="600">CAFÉ DE ESPECIALIDAD</text>
+                    {/* Líneas decorativas flanqueando */}
+                    <line x1="80" y1="140" x2="148" y2="140" stroke="#DDD5C8" strokeWidth="0.8"/>
+                    <line x1="252" y1="140" x2="320" y2="140" stroke="#DDD5C8" strokeWidth="0.8"/>
                   </svg>
                 </div>
                 <div className="demo-body">
@@ -270,21 +272,24 @@ export default function Home() {
             <Reveal delay={0.2}>
               <article className="demo-card">
                 <div className="demo-thumb">
-                  {/* Mini preview del hero de VERITAS LAB */}
+                  {/* Thumbnail VERITAS LAB — identidad tipográfica real */}
                   <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" width="260" height="130" aria-hidden>
-                    <rect width="400" height="200" fill="#040E1A"/>
-                    {/* Grid de fondo */}
-                    {[0,1,2,3,4,5,6,7,8].map(i=><line key={`v${i}`} x1={i*50} y1="0" x2={i*50} y2="200" stroke="rgba(56,189,248,.06)" strokeWidth="1"/>)}
-                    {[0,1,2,3,4].map(i=><line key={`h${i}`} x1="0" y1={i*50} x2="400" y2={i*50} stroke="rgba(56,189,248,.06)" strokeWidth="1"/>)}
-                    {/* Tubo de ensayo estilizado */}
-                    <rect x="185" y="40" width="30" height="80" rx="15" fill="none" stroke="rgba(56,189,248,.5)" strokeWidth="1.5"/>
-                    <rect x="188" y="90" width="24" height="30" rx="12" fill="rgba(56,189,248,.15)"/>
-                    <ellipse cx="200" cy="40" rx="15" ry="4" fill="rgba(56,189,248,.2)" stroke="rgba(56,189,248,.4)" strokeWidth="1"/>
-                    {/* Círculo exterior */}
-                    <circle cx="200" cy="100" r="55" fill="none" stroke="rgba(56,189,248,.12)" strokeWidth="1" strokeDasharray="4 3"/>
-                    {/* Texto */}
-                    <text x="200" y="158" textAnchor="middle" fill="rgba(56,189,248,.8)" fontSize="10" fontFamily="Arial,sans-serif" letterSpacing="5" fontWeight="700">VERITAS LAB</text>
-                    <text x="200" y="172" textAnchor="middle" fill="rgba(56,189,248,.35)" fontSize="7" fontFamily="Arial,sans-serif" letterSpacing="3">LABORATORIO CLÍNICO</text>
+                    <rect width="400" height="200" fill="#F9FAF9"/>
+                    {/* Icono flask — replica del navbar */}
+                    <rect x="188" y="60" width="24" height="52" rx="12" fill="none" stroke="#114232" strokeWidth="1.8"/>
+                    <rect x="191" y="88" width="18" height="24" rx="9" fill="rgba(13,148,136,.2)"/>
+                    <line x1="184" y1="68" x2="216" y2="68" stroke="#114232" strokeWidth="1.5"/>
+                    {/* Cuadrado verde como el icono del navbar */}
+                    <rect x="183" y="55" width="34" height="34" rx="8" fill="#114232" opacity=".06"/>
+                    {/* Texto — replica exacta del navbar */}
+                    <text x="200" y="132" textAnchor="middle" fill="#114232" fontSize="14" fontFamily="Arial,sans-serif" letterSpacing="2.5" fontWeight="700">VERITAS</text>
+                    <text x="200" y="132" textAnchor="start" dx="47" fill="#94A3B8" fontSize="14" fontFamily="Arial,sans-serif" letterSpacing="1.5" fontWeight="500"> LAB</text>
+                    {/* Línea separadora */}
+                    <line x1="140" y1="140" x2="260" y2="140" stroke="#E2E8F0" strokeWidth="1"/>
+                    {/* Tagline */}
+                    <text x="200" y="156" textAnchor="middle" fill="#94A3B8" fontSize="6.5" fontFamily="Arial,sans-serif" letterSpacing="3.5">DIAGNÓSTICO CLÍNICO</text>
+                    {/* Punto teal de acento */}
+                    <circle cx="200" cy="168" r="2" fill="#0D9488"/>
                   </svg>
                 </div>
                 <div className="demo-body">
@@ -365,7 +370,7 @@ export default function Home() {
       <footer>
         <div className="container footer-main">
           <div><Logo light /><p>Ideas que se convierten en tecnología.</p></div>
-          <div><h4>Navegación</h4><a href="#inicio">Inicio</a><a href="#servicios">Servicios</a><a href="#nosotros">Nosotros</a><a href="#contacto">Contacto</a></div>
+          <div><h4>Navegación</h4><a href="#inicio">Inicio</a><a href="#servicios">Servicios</a><a href="#demos">Demos</a><a href="#nosotros">Nosotros</a><a href="#contacto">Contacto</a></div>
           <div><h4>Áreas de trabajo</h4><span>Desarrollo web</span><span>Software a medida</span><span>IA y automatización</span><span>Soluciones digitales</span></div>
           <div><h4>Contacto</h4><a href={mailUrl}>{CONTACT.email}</a><a href={whatsappUrl} target="_blank" rel="noopener noreferrer">{CONTACT.whatsappDisplay}</a><span>{CONTACT.location}</span></div>
         </div>
